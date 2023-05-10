@@ -12,7 +12,7 @@ public class Player {
 	// Size of Player
 	private int sizeX;
 	private int sizeY;
-	private static final int MULTIPLIER = 7;
+	private static final int MULTIPLIER = 5;
 	
 	// Constant rows and columns of the sprite sheet
 	private static final int TOTAL_FRAME_COLS = 24, FRAME_ROWS = 1;

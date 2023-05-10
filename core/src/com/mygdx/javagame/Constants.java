@@ -12,5 +12,5 @@ public class Constants {
 	public static final int APP_WIDTH_RESOLUTION = 1920;
 	public static final int APP_HEIGHT_RESOLUTION = 1080;
 	
-	public static final float GAP_BETWEEN_OBSTACLES = 400.0f;
+	public static final float GAP_BETWEEN_OBSTACLES = 300.0f;
 }

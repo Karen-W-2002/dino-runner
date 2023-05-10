@@ -29,6 +29,13 @@ public class GameScreen implements Screen {
 	// TODO: maybe use delta time for the animation
 	float stateTime;
 	
+	public enum GameState {
+		RUN,
+		PAUSE,
+	}
+	
+	private GameState state;
+	
 	GameScreen(final Main game) {
 		this.game = game;
 		this.player = new Player(game);
@@ -51,6 +58,9 @@ public class GameScreen implements Screen {
 		Gdx.input.setInputProcessor(stage);
 		
 		stateTime = 0f;
+		
+		// Start the game
+		resume();
 	}
 	
 	@Override
@@ -71,37 +81,42 @@ public class GameScreen implements Screen {
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
 		
-		// Update shape renderers first
+		// Update shape render first: ground and obstacle
+		// Update ground
 		ground.draw();
 		
-		// Update obstacles and cleanup
-		for(Obstacle obstacle : obstacles) {
-			obstacle.update(delta);
+		switch(state) {
+			case RUN:
+				stateTime += delta; // Accumulate elapsed animation time
+				
+				// Update obstacles and cleanup
+				obstaclesUpdate(delta);
+				
+				// Check for any collisions
+				checkForCollisions();
+				
+				break;
+				
+			case PAUSE:
+				break;
 		}
-		spawnObstacle();
-		removeOffscreenObstacles();
-		
-		// Update the Camera
-		camera.update();
-		game.batch.setProjectionMatrix(camera.combined);
-		
-		// Add to state time
-		stateTime += delta; // Accumulate elapsed animation time
 		
 		if(Gdx.input.isKeyPressed(Keys.SPACE)) {
 			// Flip the dino
 			// and make sure it only presses once!
+			pause();
 		}
 
-		
-//		if (player.getRect().overlaps(ob1.getRect())) {
-//			System.out.println("X");
-//		}
+
+		for(Obstacle obstacle : obstacles) {
+			obstacle.draw();
+		}
+
 		
 		// BEGIN BATCH
 		game.batch.begin();
 		
-		background.update();
+//		background.update();
 		player.update(stateTime);
 		
 		// END BATCH
@@ -117,14 +132,12 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-		
+		this.state = GameState.PAUSE;
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-		
+		this.state = GameState.RUN;
 	}
 
 	@Override
@@ -166,6 +179,22 @@ public class GameScreen implements Screen {
 			{
 				obstacles.get(0).dispose();
 				obstacles.remove(0);
+			}
+		}
+	}
+	
+	private void obstaclesUpdate(float delta) {
+		for(Obstacle obstacle : obstacles) {
+			obstacle.update(delta);
+		}
+		spawnObstacle();
+		removeOffscreenObstacles();
+	}
+	
+	private void checkForCollisions() {
+		for(Obstacle obstacle : obstacles) {
+			if (player.getRect().overlaps(obstacle.getRect())) {
+				System.out.println("X");
 			}
 		}
 	}
