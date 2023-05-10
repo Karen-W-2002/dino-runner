@@ -19,7 +19,7 @@ public class MainMenuScreen implements Screen {
 		
 		// Create the camera
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
+		camera.setToOrtho(false, Constants.APP_WIDTH, Constants.APP_HEIGHT);
 		
 		// Create the music
 		menuMusic = Gdx.audio.newMusic(Gdx.files.internal("Music Menu.mp3"));
@@ -35,7 +35,9 @@ public class MainMenuScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
-		ScreenUtils.clear(0, 0, 0.2f, 1);
+		// Clear screen - prevents screen flicker
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		ScreenUtils.clear(0, 0, 0, 1);
 		
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
