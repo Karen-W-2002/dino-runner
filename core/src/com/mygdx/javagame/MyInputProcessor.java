@@ -9,7 +9,6 @@ public class MyInputProcessor implements InputProcessor {
 		
 			case Keys.SPACE:
 				GameScreen.player.flip();
-				System.out.println("TESt");
 				break;
 				
 			default:

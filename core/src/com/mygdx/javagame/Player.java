@@ -24,6 +24,10 @@ public class Player {
 	private static final int RUNNING_FRAME_COLS_END = 9;
 	private static final int RUNNING_FRAME_COLS_NUM = RUNNING_FRAME_COLS_END - RUNNING_FRAME_COLS_START + 1;
 	
+	// Constant Position of Dino
+	private static final float POSITION_Y_UPSIDE = 545;
+	private static final float POSITION_Y_DOWNSIDE = 450;
+	
 	// TODO: Collision frames on sprite sheet
 	// ...
 	
@@ -64,12 +68,12 @@ public class Player {
 		playerRect = new Rectangle(collisionPosX, collisionPosY, collisionSizeX, collisionSizeY);
 		
 		// FOR DEBUGGING
-		 shape = new ShapeRenderer();
+		shape = new ShapeRenderer();
 	}
 	
 	public void update(float time) {	
 //		flipCooldown -= time;
-		game.batch.draw(getCurrentRunFrame(time), 0, 550, sizeX, sizeY);
+		game.batch.draw(getCurrentRunFrame(time), 0, posY, sizeX, sizeY);
 	}
 
 	
@@ -103,10 +107,28 @@ public class Player {
 		runAnimation = new Animation<TextureRegion>(0.1f, runFrames);
 	}
 	
-	// Flips the player
+	// Flips the player's animation and its position
 	public void flip() {
-		for(TextureRegion frame : runAnimation.getKeyFrames()) {
-			frame.flip(false, true);
+		
+		
+		if(this.getY() == POSITION_Y_UPSIDE) {
+			this.setY(POSITION_Y_DOWNSIDE);
+		
+			for(TextureRegion frame : runAnimation.getKeyFrames()) {
+//				frame.flip(false, true);
+				
+				if(!frame.isFlipY())
+					frame.flip(false, true);
+			}
+		} else {
+			this.setY(POSITION_Y_UPSIDE);
+			
+			for(TextureRegion frame : runAnimation.getKeyFrames()) {
+//				frame.flip(false, true);
+				
+				if(frame.isFlipY())
+					frame.flip(false, true);
+			}
 		}
 	}
 	
@@ -118,6 +140,18 @@ public class Player {
 	private void initCollisionSize() {
 		collisionSizeX = sizeX/MULTIPLIER;
 		collisionSizeY = sizeY/MULTIPLIER;
+	}
+	
+	public float getY() {
+		return this.posY;
+	}
+	
+	public void setY(float posY) {
+		this.posY = posY;
+	}
+	
+	public void rectSetY(float posY) {
+		
 	}
 	
 	// FOR DEBUGGING: Draws out collision box
