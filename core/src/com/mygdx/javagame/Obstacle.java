@@ -25,10 +25,15 @@ public class Obstacle {
 		// Generating position Y direction
 		rand = new Random();
 		int randPos = rand.nextInt(2);
-		if(randPos == 0) this.yDir = 150;
-		else this.yDir = -150;
+		if(randPos == 0) {
+			this.yDir = 150;
+			obstacleRect = new Rectangle(posX, 400, 10, 150);
+		} else {
+			this.yDir = -150;
+			obstacleRect = new Rectangle(posX, 400 - 150, 10, 150);
+		}
 		
-		obstacleRect = new Rectangle(posX, 400, 10, yDir);
+		
 		
 		
 		shape = new ShapeRenderer();

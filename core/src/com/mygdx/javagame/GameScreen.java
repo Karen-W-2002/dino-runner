@@ -38,7 +38,7 @@ public class GameScreen implements Screen {
 	MyInputProcessor inputProcessor = new MyInputProcessor();
 	
 	// GAME STATE
-	private GameState state;
+	public static GameState state;
 	
 	GameScreen(final Main game) {
 		this.game = game;
@@ -138,12 +138,12 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void pause() {
-		this.state = GameState.PAUSE;
+		GameScreen.state = GameState.PAUSE;
 	}
 
 	@Override
 	public void resume() {
-		this.state = GameState.RUN;
+		GameScreen.state = GameState.RUN;
 	}
 
 	@Override

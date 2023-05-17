@@ -2,7 +2,6 @@ package com.mygdx.javagame;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -24,9 +23,13 @@ public class Player {
 	private static final int RUNNING_FRAME_COLS_END = 9;
 	private static final int RUNNING_FRAME_COLS_NUM = RUNNING_FRAME_COLS_END - RUNNING_FRAME_COLS_START + 1;
 	
-	// Constant Position of Dino
+	// Constant Position Y of Dino
 	private static final float POSITION_Y_UPSIDE = 545;
 	private static final float POSITION_Y_DOWNSIDE = 450;
+	
+	// Constant Position Y of Dino Collision Rect
+	float COLLISION_Y_UPSIDE;
+	float COLLISION_Y_DOWNSIDE;
 	
 	// TODO: Collision frames on sprite sheet
 	// ...
@@ -41,7 +44,7 @@ public class Player {
 	
 	// Player position
 	private float posX = 0;
-	private float posY = 550; // DONT CHANGE THIS
+	private float posY = 545; // DONT CHANGE THIS
 	
 	// Collision
 	private float collisionPosX;
@@ -110,21 +113,22 @@ public class Player {
 	// Flips the player's animation and its position
 	public void flip() {
 		
-		
+		// Flips the player upside down
 		if(this.getY() == POSITION_Y_UPSIDE) {
 			this.setY(POSITION_Y_DOWNSIDE);
+			this.setRectY(COLLISION_Y_DOWNSIDE);
 		
 			for(TextureRegion frame : runAnimation.getKeyFrames()) {
-//				frame.flip(false, true);
-				
 				if(!frame.isFlipY())
 					frame.flip(false, true);
 			}
+			
+		// Flips the player upside
 		} else {
 			this.setY(POSITION_Y_UPSIDE);
+			this.setRectY(COLLISION_Y_UPSIDE);
 			
 			for(TextureRegion frame : runAnimation.getKeyFrames()) {
-//				frame.flip(false, true);
 				
 				if(frame.isFlipY())
 					frame.flip(false, true);
@@ -134,12 +138,14 @@ public class Player {
 	
 	private void initCollisionPos() {
 		collisionPosX = posX + (sizeX/3);
-		collisionPosY = posY - sizeY;
+		COLLISION_Y_UPSIDE = posY - sizeY;
+		COLLISION_Y_DOWNSIDE = COLLISION_Y_UPSIDE - 80;
 	}
 	
 	private void initCollisionSize() {
-		collisionSizeX = sizeX/MULTIPLIER;
-		collisionSizeY = sizeY/MULTIPLIER;
+		collisionSizeX = 24.0f;
+		collisionSizeY = 24.0f;
+
 	}
 	
 	public float getY() {
@@ -150,14 +156,14 @@ public class Player {
 		this.posY = posY;
 	}
 	
-	public void rectSetY(float posY) {
-		
+	public void setRectY(float posY) {
+		this.getRect().setY(posY); 
 	}
 	
 	// FOR DEBUGGING: Draws out collision box
 	public void debug() {
 		shape.begin(ShapeRenderer.ShapeType.Line);
-		shape.rect(collisionPosX, collisionPosY, collisionSizeX, collisionSizeY);
+		shape.rect(collisionPosX, this.getRect().getY(), collisionSizeX, collisionSizeY);
 		shape.end();
 	}
 }

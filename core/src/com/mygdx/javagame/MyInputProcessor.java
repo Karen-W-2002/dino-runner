@@ -1,19 +1,23 @@
 package com.mygdx.javagame;
 
 import com.badlogic.gdx.InputProcessor;
+import com.mygdx.javagame.GameScreen.GameState;
 import com.badlogic.gdx.Input.Keys;
 
 public class MyInputProcessor implements InputProcessor {
 	public boolean keyDown (int keycode) {
-		switch(keycode) {
 		
-			case Keys.SPACE:
-				GameScreen.player.flip();
-				break;
-				
-			default:
-				break;
-				
+		if(GameScreen.state == GameState.RUN) {
+			switch(keycode) {
+			
+				case Keys.SPACE:
+					GameScreen.player.flip();
+					break;
+					
+				default:
+					break;
+					
+			}
 		}
 		
 		return true;
