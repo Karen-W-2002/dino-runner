@@ -65,10 +65,6 @@ public class Obstacle {
 		return this.obstacleRect;
 	}
 	
-//	Rectangle getRect() {
-//		return this.rect;
-//	}
-	
 	public void dispose() {
 		shape.dispose();
 	}

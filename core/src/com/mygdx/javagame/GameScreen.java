@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GameScreen implements Screen {
 	final Main game;
-	final Player player;
+	static Player player = null;
 	final Background background;
 	final Ground ground;
 	
@@ -34,11 +34,15 @@ public class GameScreen implements Screen {
 		PAUSE,
 	}
 	
+	// INPUT PROCESSOR
+	MyInputProcessor inputProcessor = new MyInputProcessor();
+	
+	// GAME STATE
 	private GameState state;
 	
 	GameScreen(final Main game) {
 		this.game = game;
-		this.player = new Player(game);
+		GameScreen.player = new Player(game);
 		this.background = new Background(game);
 		this.ground = new Ground();
 		
@@ -59,6 +63,9 @@ public class GameScreen implements Screen {
 		
 		stateTime = 0f;
 		
+		// INPUT PROCESSOR INIT
+		Gdx.input.setInputProcessor(inputProcessor);
+ 
 		// Start the game
 		resume();
 	}
@@ -76,6 +83,9 @@ public class GameScreen implements Screen {
 		// Clear screen - prevents screen flicker
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		ScreenUtils.clear(0, 0, 0, 1);
+		
+		// DEBUG - DRAWS COLLISION RECT
+		player.debug();
 		
 		// Update the Camera
 		camera.update();
@@ -98,25 +108,21 @@ public class GameScreen implements Screen {
 				break;
 				
 			case PAUSE:
+				// Do nothing
 				break;
 		}
-		
-		if(Gdx.input.isKeyPressed(Keys.SPACE)) {
-			// Flip the dino
-			// and make sure it only presses once!
-			pause();
-		}
-
 
 		for(Obstacle obstacle : obstacles) {
 			obstacle.draw();
 		}
+		
+		checkForPause();
 
 		
 		// BEGIN BATCH
 		game.batch.begin();
 		
-//		background.update();
+		
 		player.update(stateTime);
 		
 		// END BATCH
@@ -195,7 +201,14 @@ public class GameScreen implements Screen {
 		for(Obstacle obstacle : obstacles) {
 			if (player.getRect().overlaps(obstacle.getRect())) {
 				System.out.println("X");
+				pause();
 			}
+		}
+	}
+	
+	private void checkForPause() {
+		if(Gdx.input.isKeyPressed(Keys.ESCAPE)) {
+			pause();
 		}
 	}
 	
