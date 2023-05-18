@@ -2,6 +2,7 @@ package com.mygdx.javagame;
 
 import java.util.Random;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -11,15 +12,28 @@ public class Obstacle {
 	
 	private ShapeRenderer shape; 
 	
-	// Position of Obstacle
-	private float posX = 1280;
+	/*
+	 * posX: declares and initializes position X of this obstacle
+	 * Constantly updated in update() function
+	 */
+	private float posX = Gdx.graphics.getWidth();
+	
+//	private float posY = Gdx.graphics.getHeight();
+	
+	/*
+	 * yDir: declares the y-direction of the obstacle (upside or upside down)
+	 * Initialized inside the constructor using a random function
+	 */
 	private float yDir; // later determined with rand
 	
-	private static final float MAX_SPEED = 500.0f;
+	/*
+	 * MAX_SPEED:
+	 */
+	private static final float MAX_SPEED = 1000.0f;
+	private static float CURRENT_SPEED = 500.0f;
 	
 	// Rect for collisions
 	Rectangle obstacleRect;
-	
 	
 	Obstacle() {
 		// Generating position Y direction
@@ -33,16 +47,12 @@ public class Obstacle {
 			obstacleRect = new Rectangle(posX, 400 - 150, 10, 150);
 		}
 		
-		
-		
-		
 		shape = new ShapeRenderer();
-		
-		System.out.println("obstacle created");
 	}
 
 	public void update(float delta) {
-		float xSpeed = MAX_SPEED * delta;
+		float xSpeed = CURRENT_SPEED * (delta);
+		CURRENT_SPEED += delta * 3;
 		
 		setX(posX -  xSpeed);
 		updateRect(posX - xSpeed);
