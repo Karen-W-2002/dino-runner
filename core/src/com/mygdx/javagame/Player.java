@@ -48,7 +48,6 @@ public class Player {
 	
 	// Collision
 	private float collisionPosX;
-	private float collisionPosY;
 	private float collisionSizeX;
 	private float collisionSizeY;
 	
@@ -68,7 +67,7 @@ public class Player {
 		initCollisionSize();
 		
 		// Initialize player rect
-		playerRect = new Rectangle(collisionPosX, collisionPosY, collisionSizeX, collisionSizeY);
+		playerRect = new Rectangle(collisionPosX, COLLISION_Y_UPSIDE, collisionSizeX, collisionSizeY);
 		
 		// FOR DEBUGGING
 		shape = new ShapeRenderer();

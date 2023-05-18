@@ -38,7 +38,7 @@ public class GameScreen implements Screen {
 	MyInputProcessor inputProcessor = new MyInputProcessor();
 	
 	// GAME STATE
-	public static GameState state;
+	public static GameState state = null;
 	
 	GameScreen(final Main game) {
 		this.game = game;
@@ -87,13 +87,12 @@ public class GameScreen implements Screen {
 		// DEBUG - DRAWS COLLISION RECT
 		player.debug();
 		
+		
 		// Update the Camera
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
 		
-		// Update shape render first: ground and obstacle
-		// Update ground
-		ground.draw();
+
 		
 		switch(state) {
 			case RUN:
@@ -111,10 +110,8 @@ public class GameScreen implements Screen {
 				// Do nothing
 				break;
 		}
-
-		for(Obstacle obstacle : obstacles) {
-			obstacle.draw();
-		}
+		
+		
 		
 		checkForPause();
 
@@ -123,10 +120,25 @@ public class GameScreen implements Screen {
 		game.batch.begin();
 		
 		
+		background.update();
 		player.update(stateTime);
+		
 		
 		// END BATCH
 		game.batch.end();
+		
+		
+		/*
+		 * Draw shape renderer:
+		 * 1) Ground
+		 * 2) Obstacles
+		 */
+
+		ground.draw();
+		
+		for(Obstacle obstacle : obstacles) {
+			obstacle.draw();
+		}
 		
 	}
 

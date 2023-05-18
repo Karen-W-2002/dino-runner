@@ -1,10 +1,21 @@
 package com.mygdx.javagame;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.mygdx.javagame.GameScreen.GameState;
 import com.badlogic.gdx.Input.Keys;
 
 public class MyInputProcessor implements InputProcessor {
+	
+	/*
+	 * clickX: last clicked position of mouse position X
+	 * clickY: last clicked position of mouse position Y
+	 * Updated when touchDown
+	 */
+	public static float clickX;
+	public static float clickY;
+
+	
 	public boolean keyDown (int keycode) {
 		
 		if(GameScreen.state == GameState.RUN) {
@@ -37,7 +48,9 @@ public class MyInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
+		clickX = Gdx.input.getX();
+		clickY = Constants.APP_HEIGHT - Gdx.input.getY();
+		System.out.println(clickX + " " + clickY);
 		return false;
 	}
 

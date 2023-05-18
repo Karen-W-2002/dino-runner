@@ -16,6 +16,8 @@ public class Background {
 		this.game = game;
 		texture = new ArrayList<Texture>();
 		
+		texture.add(new Texture("Background/background.png"));
+		
 //		texture.add(new Texture("Background/Layer_0000_9.png"));
 //		texture.add(new Texture("Background/Layer_0001_8.png"));
 //		texture.add(new Texture("Background/Layer_0002_7.png"));
@@ -33,7 +35,7 @@ public class Background {
 	
 	private void render() {
 		for(int i=texture.size()-1; i>=0; i--) {
-			game.batch.draw(texture.get(i), 0, 0, Constants.APP_WIDTH, Constants.APP_HEIGHT);
+			game.batch.draw(texture.get(i), 0, 0, Constants.APP_WIDTH_RESOLUTION, Constants.APP_HEIGHT_RESOLUTION);
 		}
 	}
 	
