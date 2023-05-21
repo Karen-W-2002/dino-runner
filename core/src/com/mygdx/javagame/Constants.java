@@ -8,9 +8,18 @@ public class Constants {
 	public static final int APP_WIDTH = Gdx.graphics.getWidth();
 	public static final int APP_HEIGHT = Gdx.graphics.getHeight();
 	
-	// 1080p is the most common gaming resolution
+	// For windowed mode
 	public static final int APP_WIDTH_RESOLUTION = 1920;
 	public static final int APP_HEIGHT_RESOLUTION = 1080;
 	
 	public static final float GAP_BETWEEN_OBSTACLES = 300.0f;
+	
+	/*
+	 * Game speed configurations:
+	 * MAX_SPEED: speed limit for the game
+	 * CURRENT_SPEED: current speed
+	 */
+
+	public static final float MAX_SPEED = 1000.0f;
+	public static float CURRENT_SPEED = 500.0f;
 }

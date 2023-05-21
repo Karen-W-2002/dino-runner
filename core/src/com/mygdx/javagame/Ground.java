@@ -2,9 +2,14 @@ package com.mygdx.javagame;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+/*
+ * CLASS GROUND
+ * This is the ground object that the Dino runs on
+ */
 public class Ground {
 	
-	private ShapeRenderer shape; 
+	private ShapeRenderer shape;
+	private float posY = Constants.APP_HEIGHT/2;
 	
 	Ground() {
 		shape = new ShapeRenderer();
@@ -12,7 +17,7 @@ public class Ground {
 	
 	public void draw() {
 		shape.begin(ShapeRenderer.ShapeType.Filled);
-		shape.rect(0, 400, Constants.APP_WIDTH, 10);
+		shape.rect(0, posY, Constants.APP_WIDTH, 10);
 		shape.end();
 	}
 	

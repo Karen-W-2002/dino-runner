@@ -1,7 +1,9 @@
 package com.mygdx.javagame;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -11,26 +13,28 @@ public class Player {
 	final Main game;
 	
 	// Size of Player
-	private int sizeX;
-	private int sizeY;
-	private static final int MULTIPLIER = 5;
+//	private int sizeX;
+//	private int sizeY;
+//	private static final int MULTIPLIER = 5;
 	
 	// Handle constant rows and columns of the sprite sheet
 	private static final int TOTAL_FRAME_COLS = 24, FRAME_ROWS = 1;
 	
-	// Running frames on sprite sheet
+	/*
+	 * Running Frame Animations
+	 */
 	private static final int RUNNING_FRAME_COLS_START = 4;
 	private static final int RUNNING_FRAME_COLS_END = 9;
 	private static final int RUNNING_FRAME_COLS_NUM = RUNNING_FRAME_COLS_END - RUNNING_FRAME_COLS_START + 1;
 	
 	// Constant Position Y of Dino
-	private static final float POSITION_Y_UPSIDE = 545;
-	private static final float POSITION_Y_DOWNSIDE = 450;
+	private static final float POSITION_Y_UPSIDE = Constants.APP_HEIGHT/2 + 10;
+	private static final float POSITION_Y_DOWNSIDE = Constants.APP_HEIGHT/2 - 48;
 	
 	// Constant Position Y of Dino Collision Rect
 	float COLLISION_Y_UPSIDE;
 	float COLLISION_Y_DOWNSIDE;
-	
+//	
 	// TODO: Collision frames on sprite sheet
 	// ...
 	
@@ -38,47 +42,54 @@ public class Player {
 	private ShapeRenderer shape; 
 	
 	// Texture for player sprite
-	private Texture spriteSheet;
+	private Texture texture;
+	
+	// Texture animations
 	Animation<TextureRegion> runAnimation;
 	TextureRegion[] runFrames = new TextureRegion[RUNNING_FRAME_COLS_NUM * FRAME_ROWS];
 	
 	// Player position
 	private float posX = 0;
-	private float posY = 545; // DONT CHANGE THIS
+	private float posY = POSITION_Y_UPSIDE; // DONT CHANGE THIS
 	
 	// Collision
 	private float collisionPosX;
 	private float collisionSizeX;
 	private float collisionSizeY;
-	
+
 	Rectangle playerRect;
-	
-	// Flip variables
 
 	Player(final Main game) {
 		this.game = game;
 		
 		// Load in the new texture
-		spriteSheet = new Texture("DinoSprites/blue.png");
+		texture = new Texture("DinoSprites/blue.png");
 		initSpriteAnimation();
 		
 		// Initialize player collision box position and size
-		initCollisionPos();
 		initCollisionSize();
+		initCollisionPos();
+		
 		
 		// Initialize player rect
 		playerRect = new Rectangle(collisionPosX, COLLISION_Y_UPSIDE, collisionSizeX, collisionSizeY);
 		
 		// FOR DEBUGGING
 		shape = new ShapeRenderer();
+
 	}
 	
 	public void update(float time) {	
 //		flipCooldown -= time;
-		game.batch.draw(getCurrentRunFrame(time), 0, posY, sizeX, sizeY);
+		TextureRegion region = getCurrentRunFrame(time);
+		game.batch.draw(region, posX, posY - 10, collisionSizeX*3, collisionSizeY*3);
 	}
 
 	
+	/*
+	 * Use type casting to change TextureRegion
+	 * keyframe into a sprite
+	 */
 	TextureRegion getCurrentRunFrame(float time) {
 		return runAnimation.getKeyFrame(time, true);
 	}
@@ -88,22 +99,21 @@ public class Player {
 	}
 	
 	public void dispose() {
-		spriteSheet.dispose();
+		texture.dispose();
 		shape.dispose();
 	}
 	
 	private void initSpriteAnimation() {
-		// Set the display size in pixels
-		sizeX = spriteSheet.getWidth()/TOTAL_FRAME_COLS * MULTIPLIER;
-		sizeY = spriteSheet.getHeight()/FRAME_ROWS * MULTIPLIER;
 				
 		// Use the split method to create a 2D array of TextureRegions
-		TextureRegion[][] tempRegion = TextureRegion.split(spriteSheet,
-				spriteSheet.getWidth()/TOTAL_FRAME_COLS,
-				spriteSheet.getHeight()/FRAME_ROWS);
+		TextureRegion[][] tempRegion = TextureRegion.split(texture,
+				texture.getWidth()/TOTAL_FRAME_COLS,
+				texture.getHeight()/FRAME_ROWS);
 				
 		// Create a 1d region of running frames
-		for(int i=0; i<RUNNING_FRAME_COLS_NUM; i++) runFrames[i] = tempRegion[0][i + RUNNING_FRAME_COLS_START];
+		for(int i=0; i<RUNNING_FRAME_COLS_NUM; i++) {
+			runFrames[i] = tempRegion[0][i + RUNNING_FRAME_COLS_START];
+		}
 				
 		// Initialize the Animation with the frame interval and array of frames
 		runAnimation = new Animation<TextureRegion>(0.1f, runFrames);
@@ -136,14 +146,14 @@ public class Player {
 	}
 	
 	private void initCollisionPos() {
-		collisionPosX = posX + (sizeX/3);
-		COLLISION_Y_UPSIDE = posY - sizeY;
+		collisionPosX = posX + collisionSizeX;
+		COLLISION_Y_UPSIDE = posY + collisionSizeY;
 		COLLISION_Y_DOWNSIDE = COLLISION_Y_UPSIDE - 80;
 	}
 	
 	private void initCollisionSize() {
-		collisionSizeX = 24.0f;
-		collisionSizeY = 24.0f;
+		collisionSizeX = texture.getWidth()/TOTAL_FRAME_COLS;
+		collisionSizeY = texture.getHeight()/FRAME_ROWS;
 
 	}
 	
@@ -161,8 +171,9 @@ public class Player {
 	
 	// FOR DEBUGGING: Draws out collision box
 	public void debug() {
-		shape.begin(ShapeRenderer.ShapeType.Line);
+		shape.begin(ShapeRenderer.ShapeType.Filled);
 		shape.rect(collisionPosX, this.getRect().getY(), collisionSizeX, collisionSizeY);
+
 		shape.end();
 	}
 }

@@ -8,51 +8,42 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Obstacle {
 	
-	private Random rand;
-	
 	private ShapeRenderer shape; 
 	
 	/*
 	 * posX: declares and initializes position X of this obstacle
 	 * Constantly updated in update() function
 	 */
-	private float posX = Gdx.graphics.getWidth();
+	private float posX = Gdx.graphics.getWidth();	
+	private float posY = Constants.APP_HEIGHT/2;
 	
-//	private float posY = Gdx.graphics.getHeight();
+	private int sizeY = Constants.APP_HEIGHT/5;
 	
-	/*
-	 * yDir: declares the y-direction of the obstacle (upside or upside down)
-	 * Initialized inside the constructor using a random function
-	 */
-	private float yDir; // later determined with rand
+	private int randPos;
 	
-	/*
-	 * MAX_SPEED:
-	 */
-	private static final float MAX_SPEED = 1000.0f;
-	private static float CURRENT_SPEED = 500.0f;
 	
 	// Rect for collisions
 	Rectangle obstacleRect;
 	
 	Obstacle() {
 		// Generating position Y direction
-		rand = new Random();
-		int randPos = rand.nextInt(2);
+		Random rand = new Random();
+		randPos = rand.nextInt(2);
 		if(randPos == 0) {
-			this.yDir = 150;
-			obstacleRect = new Rectangle(posX, 400, 10, 150);
+			obstacleRect = new Rectangle(posX, posY, 10, sizeY);
 		} else {
-			this.yDir = -150;
-			obstacleRect = new Rectangle(posX, 400 - 150, 10, 150);
+			obstacleRect = new Rectangle(posX, posY-sizeY, 10, sizeY);
 		}
 		
 		shape = new ShapeRenderer();
 	}
 
 	public void update(float delta) {
-		float xSpeed = CURRENT_SPEED * (delta);
-		CURRENT_SPEED += delta * 3;
+		float xSpeed = Constants.CURRENT_SPEED * (delta);
+		
+		if(Constants.CURRENT_SPEED < Constants.MAX_SPEED)
+			Constants.CURRENT_SPEED += delta * 3; // TODO: move to gamescreen
+		
 		
 		setX(posX -  xSpeed);
 		updateRect(posX - xSpeed);
@@ -60,7 +51,13 @@ public class Obstacle {
 	
 	public void draw() {		
 		shape.begin(ShapeRenderer.ShapeType.Filled);
-		shape.rect(posX, 400, 10, yDir);
+		
+		if(randPos == 0) {
+			shape.rect(posX, posY, 10, sizeY);
+		} else {
+			shape.rect(posX, posY, 10, -sizeY);
+		}
+		
 		shape.end();
 	}
 
@@ -73,13 +70,21 @@ public class Obstacle {
 	}
 	
 	void updateRect(float posX) {
-		this.obstacleRect.x = posX;
+		obstacleRect.x = posX;
 	}
 	
 	Rectangle getRect() {
 		return this.obstacleRect;
 	}
 	
+	public void resize() {
+//		UPDATE X AND Y
+		this.posY = Constants.APP_HEIGHT/2;
+	}
+	
+	/*
+	 * Disposes of unwanted objects
+	 */
 	public void dispose() {
 		shape.dispose();
 	}

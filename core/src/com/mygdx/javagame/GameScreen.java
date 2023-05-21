@@ -10,6 +10,8 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class GameScreen implements Screen {
 	final Main game;
@@ -24,6 +26,8 @@ public class GameScreen implements Screen {
 	Stage stage;
 	OrthographicCamera camera;
 	Music gameMusic;
+	
+	Viewport viewport;
 	
 	// A variable for tracking elapsed time for the animation
 	// TODO: maybe use delta time for the animation
@@ -40,6 +44,12 @@ public class GameScreen implements Screen {
 	// GAME STATE
 	public static GameState state = null;
 	
+	// reverseflip
+	ReverseFlip reverseflip;
+	
+	/*
+	 * GameScreen Constructor
+	 */
 	GameScreen(final Main game) {
 		this.game = game;
 		GameScreen.player = new Player(game);
@@ -51,7 +61,7 @@ public class GameScreen implements Screen {
 		
 		// Create the camera
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, Constants.APP_WIDTH_RESOLUTION, Constants.APP_HEIGHT_RESOLUTION);
+		camera.setToOrtho(false, Constants.APP_WIDTH, Constants.APP_HEIGHT);
 		
 		// Create the music
 		gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Music Game.mp3"));
@@ -65,7 +75,11 @@ public class GameScreen implements Screen {
 		
 		// INPUT PROCESSOR INIT
 		Gdx.input.setInputProcessor(inputProcessor);
+		
+		viewport = new FitViewport(Constants.APP_WIDTH, Constants.APP_HEIGHT, camera);
  
+		reverseflip = new ReverseFlip(game);
+		
 		// Start the game
 		resume();
 	}
@@ -84,45 +98,27 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		ScreenUtils.clear(0, 0, 0, 1);
 		
-		// DEBUG - DRAWS COLLISION RECT
-		player.debug();
-		
-		
 		// Update the Camera
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
 		
-
-		
-		switch(state) {
-			case RUN:
-				stateTime += delta; // Accumulate elapsed animation time
-				
-				// Update obstacles and cleanup
-				obstaclesUpdate(delta);
-				
-				// Check for any collisions
-				checkForCollisions();
-				
-				break;
-				
-			case PAUSE:
-				// Do nothing
-				break;
-		}
-		
 		
 		
 		checkForPause();
-
+		
 		
 		// BEGIN BATCH
 		game.batch.begin();
 		
 		
+		
 		background.update();
 		player.update(stateTime);
 		
+		
+		
+		
+//		reverseflip.update(delta);
 		
 		// END BATCH
 		game.batch.end();
@@ -133,19 +129,51 @@ public class GameScreen implements Screen {
 		 * 1) Ground
 		 * 2) Obstacles
 		 */
-
 		ground.draw();
-		
 		for(Obstacle obstacle : obstacles) {
 			obstacle.draw();
 		}
+		// DEBUG - DRAWS COLLISION RECT
+//				player.debug();
+		/*
+		 * Switch Case GAMESTATE
+		 * If GameState is "RUN" then we update
+		 * 1. stateTime
+		 * 2. collisions
+		 * 3. obstacles
+		 * 
+		 * If GameState is "PAUSE" then do nothing...
+		 */
+		switch(state) {
+		case RUN:
+			stateTime += delta; // Accumulate elapsed animation time
+			
+			
+			
+			// Check for any collisions
+			checkForCollisions();
+			
+			// Update obstacles and cleanup
+			obstaclesUpdate(delta);
+			
+			break;
+			
+		case PAUSE:
+			// Do nothing
+			break;
+		}
+	
 		
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		// TODO Auto-generated method stub
-		
+		viewport.update(width, height);
+        camera.update();
+        for(Obstacle obstacle : obstacles) {
+        	obstacle.resize();
+        }
 	}
 
 	@Override
@@ -209,6 +237,12 @@ public class GameScreen implements Screen {
 		removeOffscreenObstacles();
 	}
 	
+	/*
+	 * Check for on screen collisions between player and other objects
+	 * 1. Obstacle
+	 * 2. TODO: ReverseFlip
+	 * 3. TODO: Coins
+	 */
 	private void checkForCollisions() {
 		for(Obstacle obstacle : obstacles) {
 			if (player.getRect().overlaps(obstacle.getRect())) {

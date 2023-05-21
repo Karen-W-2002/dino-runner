@@ -1,5 +1,6 @@
 package com.mygdx.javagame;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
@@ -11,7 +12,8 @@ public class DesktopLauncher {
 		config.setWindowedMode(Constants.APP_WIDTH_RESOLUTION, Constants.APP_HEIGHT_RESOLUTION);
 		config.useVsync(true);
 		config.setForegroundFPS(60);
-		config.setTitle("JavaGame");
+		config.setTitle("Dino Runner");
+		
 		new Lwjgl3Application(new Main(), config);
 	}
 }
