@@ -22,6 +22,7 @@ public class GameScreen implements Screen {
 	// Obstacles
 //	public static List<Obstacle> obstacles = new ArrayList<Obstacle>();
 	List<Obstacle> obstacles = new ArrayList<Obstacle>();
+	List<ReverseFlip> reverseflips = new ArrayList<ReverseFlip>();
 	
 	Stage stage;
 	OrthographicCamera camera;
@@ -78,7 +79,6 @@ public class GameScreen implements Screen {
 		
 		viewport = new FitViewport(Constants.APP_WIDTH, Constants.APP_HEIGHT, camera);
  
-		reverseflip = new ReverseFlip(game);
 		
 		// Start the game
 		resume();
@@ -107,6 +107,9 @@ public class GameScreen implements Screen {
 		checkForPause();
 		
 		
+		// SHAPERENDERER ERROR
+		Gdx.gl.glDisable(Gdx.graphics.getGL20().GL_BLEND);
+		
 		// BEGIN BATCH
 		game.batch.begin();
 		
@@ -115,7 +118,9 @@ public class GameScreen implements Screen {
 		background.update();
 		player.update(stateTime);
 		
-		
+//		reverseFlipsUpdate(delta);
+		// Update obstacles and cleanup
+//		obstaclesUpdate(delta);
 		
 		
 //		reverseflip.update(delta);
@@ -153,8 +158,8 @@ public class GameScreen implements Screen {
 			// Check for any collisions
 			checkForCollisions();
 			
-			// Update obstacles and cleanup
-			obstaclesUpdate(delta);
+			updateItems(delta);
+			
 			
 			break;
 			
@@ -199,42 +204,106 @@ public class GameScreen implements Screen {
 		ground.dispose();
 	}
 	
-	private void spawnObstacle() {
-		if(obstacles.size() == 0) {
-			createObstacles();
-		} else {
+	/*
+	 * Spawn objects into the game
+	 * 
+	 * Priority goes from 1 to 3,
+	 * For example, the code checks for existing obstacles first, and if they don't exist
+	 * Create the obstacle first, and other objects will be generated in the following updates
+	 * 1. TODO: Obstacles
+	 * 2. TODO: ReverseFlip
+	 * 3. TODO: Coins
+	 */
+	private void spawnItems() {
+		if(obstacles.size() == 0) createObstacles();
+		else if(reverseflips.size() == 0 && obstacles.get(obstacles.size() - 1).getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_OBSTACLES) createReverseFlips();
+
+		else if(obstacles.size() != 0 && reverseflips.size() != 0){
+				
 			Obstacle lastObstacle = obstacles.get(obstacles.size() - 1);
+			ReverseFlip lastRf = reverseflips.get(reverseflips.size() - 1);
 			
-			if(lastObstacle.getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_OBSTACLES) {
+			if(	lastObstacle.getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_OBSTACLES &&
+				lastRf.getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_OBSTACLES
+			) {
 				createObstacles();
 			}
+			else if(lastObstacle.getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_OBSTACLES &&
+					lastRf.getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_OBSTACLES) {
+				createReverseFlips();
+			}
+			
 		}
 	}
+	
+	/*
+	 * Create individual items
+	 */
 	
 	private void createObstacles() {
 		Obstacle obstacle = new Obstacle();
 		obstacle.setX(Gdx.graphics.getWidth());
 		obstacles.add(obstacle);
 	}
+	
+	private void createReverseFlips() {
+		ReverseFlip rf = new ReverseFlip(game);
+		rf.setX(Gdx.graphics.getWidth());
+		reverseflips.add(rf);
+	}
 
 	private void removeOffscreenObstacles() {
 		if(obstacles.size() > 0) {
 			Obstacle firstObstacle = obstacles.get(0);
 			
-			if(firstObstacle.getX() < 0 - 10)
-			{
+			if(firstObstacle.getX() < 0 - 10) {
 				obstacles.get(0).dispose();
 				obstacles.remove(0);
 			}
 		}
 	}
 	
+	private void removeOffscreenReverseFlips() {
+		if(reverseflips.size() > 0) {
+			ReverseFlip rf = reverseflips.get(0);
+			
+			if(rf.getX() < 0 - 10) {
+				reverseflips.get(0).dispose();
+				reverseflips.remove(0);
+			}
+		}
+	}
+	
+	/*
+	 * Removes off screen objects
+	 * 1. TODO: Obstacle
+	 * 2. TODO: ReverseFlip
+	 * 3. TODO: Coins
+	 */
+	private void removeOffscreenItems() {
+		
+	}
+	
 	private void obstaclesUpdate(float delta) {
 		for(Obstacle obstacle : obstacles) {
 			obstacle.update(delta);
 		}
-		spawnObstacle();
+//		spawnObstacle();
 		removeOffscreenObstacles();
+	}
+	
+	private void reverseFlipsUpdate(float delta) {
+		for(ReverseFlip rf : reverseflips) {
+			rf.update(delta);
+		}
+//		spawnReverseFlip();
+		removeOffscreenReverseFlips();
+	}
+	
+	private void updateItems(float delta) {
+		obstaclesUpdate(delta);
+		reverseFlipsUpdate(delta);
+		spawnItems();
 	}
 	
 	/*
@@ -248,6 +317,15 @@ public class GameScreen implements Screen {
 			if (player.getRect().overlaps(obstacle.getRect())) {
 				System.out.println("X");
 				pause();
+			}
+		}
+		
+		for(ReverseFlip rf : reverseflips) {
+			if(player.getRect().overlaps(rf.getRect())) {
+				if(!rf.getCollided()) {
+					rf.turnOffCollision();
+					player.flip();
+				}
 			}
 		}
 	}

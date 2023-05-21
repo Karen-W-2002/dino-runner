@@ -32,6 +32,8 @@ public class ReverseFlip {
 	// Rect for collisions
 	Rectangle rect;
 	
+	private boolean collided = false;
+	
 	ReverseFlip(final Main game) {
 		this.game = game;
 		
@@ -42,30 +44,35 @@ public class ReverseFlip {
 		
 		arrowTopSprite = new Sprite(texture);
 		arrowTopSprite.setScale(0.2f, 0.15f);
-		arrowTopSprite.setBounds(100, posY, arrowTopSprite.getScaleX()*arrowTopSprite.getWidth(), arrowTopSprite.getScaleY()*arrowTopSprite.getHeight());
+		arrowTopSprite.setBounds(posX, posY, arrowTopSprite.getScaleX()*arrowTopSprite.getWidth(), arrowTopSprite.getScaleY()*arrowTopSprite.getHeight());
 
 		arrowBottomSprite = new Sprite(texture);
 		arrowBottomSprite.setFlip(true, true);
 		arrowBottomSprite.setScale(0.2f, 0.15f);
-		arrowBottomSprite.setBounds(100, posY - arrowBottomSprite.getHeight() - 10, arrowBottomSprite.getScaleX()*arrowBottomSprite.getWidth(), arrowBottomSprite.getScaleY()*arrowBottomSprite.getHeight());
+		arrowBottomSprite.setBounds(posX, posY - arrowBottomSprite.getHeight() - 10, arrowBottomSprite.getScaleX()*arrowBottomSprite.getWidth(), arrowBottomSprite.getScaleY()*arrowBottomSprite.getHeight());
 		
-//		rect = new Rectangle(posX, posY, sizeX, sizeY);
+		rect = new Rectangle(posX, posY - arrowTopSprite.getHeight() - 10, arrowTopSprite.getWidth(), arrowTopSprite.getHeight()*2 + 10);
 	}
 	
 	public void update(float delta) {
 		float xSpeed = Constants.CURRENT_SPEED * delta;
 		
-//		game.batch.draw(texture, 100, posY, sizeX, sizeY);
-		game.batch.draw(arrowTopSprite, 100, posY, arrowTopSprite.getWidth(), arrowTopSprite.getHeight());
-		game.batch.draw(arrowBottomSprite, 100, posY - arrowBottomSprite.getHeight() - 10, arrowBottomSprite.getWidth(), arrowBottomSprite.getHeight());
-//		arrowTopSprite.draw(game.batch);
-//		arrowBottomSprite.draw(game.batch);
+		if(Constants.CURRENT_SPEED < Constants.MAX_SPEED)
+			Constants.CURRENT_SPEED += delta * 3; // TODO: move to gamescreen
+		
+		setX(posX -  xSpeed);
+		updateRect(posX - xSpeed);
 
+		game.batch.begin();
+		game.batch.draw(arrowTopSprite, posX, posY, arrowTopSprite.getWidth(), arrowTopSprite.getHeight());
+		game.batch.draw(arrowBottomSprite, posX, posY - arrowBottomSprite.getHeight() - 10, arrowBottomSprite.getWidth(), arrowBottomSprite.getHeight());
+		game.batch.end();
+	
 	}
 	
 	public void draw() {
 		shape.begin(ShapeRenderer.ShapeType.Filled);
-//		shape.rect();
+		shape.rect(posX, posY - arrowTopSprite.getHeight() - 10, arrowTopSprite.getWidth(), arrowTopSprite.getHeight()*2 + 10);
 		shape.end();
 	}
 	
@@ -83,6 +90,14 @@ public class ReverseFlip {
 	
 	Rectangle getRect() {
 		return this.rect;
+	}
+	
+	public boolean getCollided() {
+		return collided;
+	}
+	
+	public void turnOffCollision() {
+		collided = true;
 	}
 	
 	/*
