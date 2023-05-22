@@ -48,6 +48,9 @@ public class GameScreen implements Screen {
 	// reverseflip
 	ReverseFlip reverseflip;
 	
+	// score
+	Score score;
+	
 	/*
 	 * GameScreen Constructor
 	 */
@@ -79,6 +82,7 @@ public class GameScreen implements Screen {
 		
 		viewport = new FitViewport(Constants.APP_WIDTH, Constants.APP_HEIGHT, camera);
  
+		score = new Score(game);
 		
 		// Start the game
 		resume();
@@ -129,6 +133,9 @@ public class GameScreen implements Screen {
 		game.batch.end();
 		
 		
+		score.draw();
+		
+		
 		/*
 		 * Draw shape renderer:
 		 * 1) Ground
@@ -159,6 +166,7 @@ public class GameScreen implements Screen {
 			checkForCollisions();
 			
 			updateItems(delta);
+			score.update(delta);
 			
 			
 			break;
