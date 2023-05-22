@@ -327,6 +327,7 @@ public class GameScreen implements Screen {
 			if (player.getRect().overlaps(obstacle.getRect())) {
 				if(!obstacle.getCollided() && health.getNumberOfLives() > 0) {
 					obstacle.turnOffCollision();
+					SoundsAndMusic.playCollisionSound();
 					health.removeHeart();
 				}
 					
