@@ -18,7 +18,7 @@ public class Score {
 		scoreString = "Score: 0";
 	    font = new BitmapFont();
 	    font.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
-	    font.getData().setScale(5);
+	    font.getData().setScale(2);
 	    
 	}
 	

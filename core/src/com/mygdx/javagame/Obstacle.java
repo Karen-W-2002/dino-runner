@@ -21,6 +21,8 @@ public class Obstacle {
 	
 	private int randPos;
 	
+	private boolean isCollided = false;
+	
 	
 	// Rect for collisions
 	Rectangle obstacleRect;
@@ -80,6 +82,14 @@ public class Obstacle {
 	public void resize() {
 //		UPDATE X AND Y
 		this.posY = Constants.APP_HEIGHT/2;
+	}
+	
+	public boolean getCollided() {
+		return isCollided;
+	}
+	
+	public void turnOffCollision() {
+		isCollided = true;
 	}
 	
 	/*

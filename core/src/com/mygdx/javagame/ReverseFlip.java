@@ -32,7 +32,7 @@ public class ReverseFlip {
 	// Rect for collisions
 	Rectangle rect;
 	
-	private boolean collided = false;
+	private boolean isCollided = false;
 	
 	ReverseFlip(final Main game) {
 		this.game = game;
@@ -93,11 +93,11 @@ public class ReverseFlip {
 	}
 	
 	public boolean getCollided() {
-		return collided;
+		return isCollided;
 	}
 	
 	public void turnOffCollision() {
-		collided = true;
+		isCollided = true;
 	}
 	
 	/*

@@ -50,6 +50,7 @@ public class GameScreen implements Screen {
 	
 	// score
 	Score score;
+	Health health;
 	
 	/*
 	 * GameScreen Constructor
@@ -83,6 +84,7 @@ public class GameScreen implements Screen {
 		viewport = new FitViewport(Constants.APP_WIDTH, Constants.APP_HEIGHT, camera);
  
 		score = new Score(game);
+		health = new Health(game);
 		
 		// Start the game
 		resume();
@@ -121,7 +123,7 @@ public class GameScreen implements Screen {
 		
 		background.update();
 		player.update(stateTime);
-		
+		health.draw();
 //		reverseFlipsUpdate(delta);
 		// Update obstacles and cleanup
 //		obstaclesUpdate(delta);
@@ -323,8 +325,13 @@ public class GameScreen implements Screen {
 	private void checkForCollisions() {
 		for(Obstacle obstacle : obstacles) {
 			if (player.getRect().overlaps(obstacle.getRect())) {
-				System.out.println("X");
-				pause();
+				if(!obstacle.getCollided() && health.getNumberOfLives() > 0) {
+					obstacle.turnOffCollision();
+					health.removeHeart();
+				}
+					
+				if(health.getNumberOfLives() == 0)
+					pause();
 			}
 		}
 		
