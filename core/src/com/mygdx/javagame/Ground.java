@@ -1,5 +1,6 @@
 package com.mygdx.javagame;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /*
@@ -17,6 +18,7 @@ public class Ground {
 	
 	public void draw() {
 		shape.begin(ShapeRenderer.ShapeType.Filled);
+		shape.setColor(Color.DARK_GRAY);
 		shape.rect(0, posY, Constants.APP_WIDTH, 10);
 		shape.end();
 	}

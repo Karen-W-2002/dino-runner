@@ -79,8 +79,7 @@ public class Player {
 
 	}
 	
-	public void update(float time) {	
-//		flipCooldown -= time;
+	public void update(float time) {
 		TextureRegion region = getCurrentRunFrame(time);
 		game.batch.draw(region, posX, posY - 10, collisionSizeX*3, collisionSizeY*3);
 	}

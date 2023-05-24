@@ -13,6 +13,7 @@ public class Constants {
 	public static final int APP_HEIGHT_RESOLUTION = 1080;
 	
 	public static final float GAP_BETWEEN_OBSTACLES = 300.0f;
+	public static final float GAP_BETWEEN_EGGS = 150.0f;
 	
 	/*
 	 * Game speed configurations:
@@ -20,6 +21,6 @@ public class Constants {
 	 * CURRENT_SPEED: current speed
 	 */
 
-	public static final float MAX_SPEED = 1000.0f;
+	public static final float MAX_SPEED = 1250.0f;
 	public static float CURRENT_SPEED = 500.0f;
 }

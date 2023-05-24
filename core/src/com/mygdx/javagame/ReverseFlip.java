@@ -30,7 +30,7 @@ public class ReverseFlip {
 	private ShapeRenderer shape;
 	
 	// Rect for collisions
-	Rectangle rect;
+	private Rectangle rect;
 	
 	private boolean isCollided = false;
 	

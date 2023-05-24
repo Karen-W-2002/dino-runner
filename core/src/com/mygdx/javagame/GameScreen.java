@@ -23,6 +23,7 @@ public class GameScreen implements Screen {
 //	public static List<Obstacle> obstacles = new ArrayList<Obstacle>();
 	List<Obstacle> obstacles = new ArrayList<Obstacle>();
 	List<ReverseFlip> reverseflips = new ArrayList<ReverseFlip>();
+	List<Egg> eggs = new ArrayList<Egg>();
 	
 	Stage stage;
 	OrthographicCamera camera;
@@ -45,12 +46,11 @@ public class GameScreen implements Screen {
 	// GAME STATE
 	public static GameState state = null;
 	
-	// reverseflip
-	ReverseFlip reverseflip;
 	
 	// score
 	Score score;
 	Health health;
+	GameUI ui;
 	
 	/*
 	 * GameScreen Constructor
@@ -63,6 +63,7 @@ public class GameScreen implements Screen {
 		
 		// Create the obstacles
 		createObstacles();
+		ui = new GameUI(game);
 		
 		// Create the camera
 		camera = new OrthographicCamera();
@@ -124,18 +125,13 @@ public class GameScreen implements Screen {
 		background.update();
 		player.update(stateTime);
 		health.draw();
-//		reverseFlipsUpdate(delta);
-		// Update obstacles and cleanup
-//		obstaclesUpdate(delta);
-		
-		
-//		reverseflip.update(delta);
 		
 		// END BATCH
 		game.batch.end();
 		
 		
 		score.draw();
+		ui.drawUI(stateTime);
 		
 		
 		/*
@@ -147,8 +143,7 @@ public class GameScreen implements Screen {
 		for(Obstacle obstacle : obstacles) {
 			obstacle.draw();
 		}
-		// DEBUG - DRAWS COLLISION RECT
-//				player.debug();
+		
 		/*
 		 * Switch Case GAMESTATE
 		 * If GameState is "RUN" then we update
@@ -242,8 +237,20 @@ public class GameScreen implements Screen {
 					lastRf.getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_OBSTACLES) {
 				createReverseFlips();
 			}
+			else if(lastObstacle.getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_EGGS &&
+					lastRf.getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_EGGS) {
+
+				if(eggs.size() == 0) createEggs();
+				else {
+					Egg lastEgg = eggs.get(eggs.size() - 1);
+					if(lastEgg.getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_EGGS) {
+						createEggs();
+					}
+				}
+			}
 			
 		}
+	
 	}
 	
 	/*
@@ -260,6 +267,24 @@ public class GameScreen implements Screen {
 		ReverseFlip rf = new ReverseFlip(game);
 		rf.setX(Gdx.graphics.getWidth());
 		reverseflips.add(rf);
+	}
+	
+	private void createEggs() {
+		Egg egg = new Egg(game);
+		egg.setX(Gdx.graphics.getWidth());
+		eggs.add(egg);
+	}
+	
+	private void removeOffscreenEggs() {
+		if(eggs.size() > 0) {
+			Egg firstEgg = eggs.get(0);
+			
+			if(firstEgg.getX() < 0 - 10) {
+				eggs.get(0).dispose();
+				eggs.remove(0);
+			}
+			
+		}
 	}
 
 	private void removeOffscreenObstacles() {
@@ -310,19 +335,29 @@ public class GameScreen implements Screen {
 		removeOffscreenReverseFlips();
 	}
 	
+	private void eggsUpdate(float delta) {
+		for(Egg egg : eggs) {
+			egg.update(delta);
+		}
+		
+		removeOffscreenEggs();
+	}
+	
 	private void updateItems(float delta) {
 		obstaclesUpdate(delta);
 		reverseFlipsUpdate(delta);
+		eggsUpdate(delta);
 		spawnItems();
 	}
 	
 	/*
 	 * Check for on screen collisions between player and other objects
 	 * 1. Obstacle
-	 * 2. TODO: ReverseFlip
-	 * 3. TODO: Coins
+	 * 2. ReverseFlip
+	 * 3. Coins
 	 */
 	private void checkForCollisions() {
+		
 		for(Obstacle obstacle : obstacles) {
 			if (player.getRect().overlaps(obstacle.getRect())) {
 				if(!obstacle.getCollided() && health.getNumberOfLives() > 0) {
@@ -344,6 +379,18 @@ public class GameScreen implements Screen {
 				}
 			}
 		}
+		
+		for(Egg egg : eggs) {
+			if(player.getRect().overlaps(egg.getRect())) {
+				if(!egg.getCollided()) {
+					egg.turnOffCollision();
+					ui.updateEggScore();
+					egg.setSize(0, 0);
+				}
+			}
+		}
+		
+		
 	}
 	
 	private void checkForPause() {

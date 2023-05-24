@@ -3,6 +3,7 @@ package com.mygdx.javagame;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -53,6 +54,7 @@ public class Obstacle {
 	
 	public void draw() {		
 		shape.begin(ShapeRenderer.ShapeType.Filled);
+		shape.setColor(Color.DARK_GRAY);
 		
 		if(randPos == 0) {
 			shape.rect(posX, posY, 10, sizeY);
