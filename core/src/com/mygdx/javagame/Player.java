@@ -3,7 +3,6 @@ package com.mygdx.javagame;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -12,21 +11,12 @@ public class Player {
 	
 	final Main game;
 	
-	// Size of Player
-//	private int sizeX;
-//	private int sizeY;
-//	private static final int MULTIPLIER = 5;
-	
-	// Handle constant rows and columns of the sprite sheet
-	private static final int TOTAL_FRAME_COLS = 24, FRAME_ROWS = 1;
-	
 	/*
 	 * Running Frame Animations
 	 */
-	private static final int RUNNING_FRAME_COLS_START = 4;
-	private static final int RUNNING_FRAME_COLS_END = 9;
-	private static final int RUNNING_FRAME_COLS_NUM = RUNNING_FRAME_COLS_END - RUNNING_FRAME_COLS_START + 1;
-	
+	private static final int TOTAL_RUN_FRAMES = 6;
+	private static final int TOTAL_HURT_FRAMES = 4;
+
 	// Constant Position Y of Dino
 	private static final float POSITION_Y_UPSIDE = Constants.APP_HEIGHT/2 + 10;
 	private static final float POSITION_Y_DOWNSIDE = Constants.APP_HEIGHT/2 - 48;
@@ -43,10 +33,15 @@ public class Player {
 	
 	// Texture for player sprite
 	private Texture texture;
+	private Texture hurtTexture;
 	
 	// Texture animations
 	Animation<TextureRegion> runAnimation;
-	TextureRegion[] runFrames = new TextureRegion[RUNNING_FRAME_COLS_NUM * FRAME_ROWS];
+	TextureRegion[] runFrames = new TextureRegion[TOTAL_RUN_FRAMES];
+	
+	Animation<TextureRegion> hurtAnimation;
+	TextureRegion[] hurtFrames = new TextureRegion[TOTAL_HURT_FRAMES];
+	
 	
 	// Player position
 	private float posX = 0;
@@ -58,12 +53,16 @@ public class Player {
 	private float collisionSizeY;
 
 	Rectangle playerRect;
+	
+	private boolean isHurt = false;
+	private int currentHurtFrame = 0;
 
 	Player(final Main game) {
 		this.game = game;
 		
 		// Load in the new texture
-		texture = new Texture("DinoSprites/blue.png");
+		texture = new Texture("DinoMove/doux_move.png");
+		hurtTexture = new Texture("DinoHurt/doux_hurt.png");
 		initSpriteAnimation();
 		
 		// Initialize player collision box position and size
@@ -80,8 +79,29 @@ public class Player {
 	}
 	
 	public void update(float time) {
-		TextureRegion region = getCurrentRunFrame(time);
-		game.batch.draw(region, posX, posY - 10, collisionSizeX*3, collisionSizeY*3);
+		if(!isHurt) {
+			TextureRegion region = getCurrentRunFrame(time);
+			game.batch.draw(region, posX, posY - 10, collisionSizeX*3, collisionSizeY*3);
+		} else {
+			TextureRegion region = getCurrentHurtFrame(time);
+			game.batch.draw(region, posX, posY - 10, collisionSizeX*3, collisionSizeY*3);
+			
+			currentHurtFrame++;
+			if(currentHurtFrame == TOTAL_HURT_FRAMES*10)  {
+				isHurt = false;
+				currentHurtFrame = 0;
+				// TODO: ADD INVINCIBILITY???
+			}
+		}
+		
+	}
+	
+	public void setHurt() {
+		this.isHurt = true;
+	}
+	
+	public boolean isHurt() {
+		return this.isHurt;
 	}
 
 	
@@ -91,6 +111,10 @@ public class Player {
 	 */
 	TextureRegion getCurrentRunFrame(float time) {
 		return runAnimation.getKeyFrame(time, true);
+	}
+	
+	TextureRegion getCurrentHurtFrame(float time) {
+		return hurtAnimation.getKeyFrame(time,true);
 	}
 	
 	Rectangle getRect() {
@@ -106,16 +130,29 @@ public class Player {
 				
 		// Use the split method to create a 2D array of TextureRegions
 		TextureRegion[][] tempRegion = TextureRegion.split(texture,
-				texture.getWidth()/TOTAL_FRAME_COLS,
-				texture.getHeight()/FRAME_ROWS);
+				texture.getWidth()/TOTAL_RUN_FRAMES,
+				texture.getHeight());
 				
 		// Create a 1d region of running frames
-		for(int i=0; i<RUNNING_FRAME_COLS_NUM; i++) {
-			runFrames[i] = tempRegion[0][i + RUNNING_FRAME_COLS_START];
+		for(int i=0; i<TOTAL_RUN_FRAMES; i++) {
+			runFrames[i] = tempRegion[0][i];
 		}
 				
 		// Initialize the Animation with the frame interval and array of frames
 		runAnimation = new Animation<TextureRegion>(0.1f, runFrames);
+		
+		
+		// HURT FRAMES
+		tempRegion = TextureRegion.split(hurtTexture,
+				hurtTexture.getWidth()/TOTAL_HURT_FRAMES,
+				hurtTexture.getHeight());
+		
+		for(int i=0; i<TOTAL_HURT_FRAMES; i++) {
+			System.out.println(i);
+			hurtFrames[i] = tempRegion[0][i];
+		}
+		
+		hurtAnimation = new Animation<TextureRegion>(0.1f, hurtFrames);
 	}
 	
 	// Flips the player's animation and its position
@@ -131,6 +168,11 @@ public class Player {
 					frame.flip(false, true);
 			}
 			
+			for(TextureRegion frame : hurtAnimation.getKeyFrames()) {
+				if(!frame.isFlipY())
+					frame.flip(false, true);
+			}
+			
 		// Flips the player upside
 		} else {
 			this.setY(POSITION_Y_UPSIDE);
@@ -138,6 +180,11 @@ public class Player {
 			
 			for(TextureRegion frame : runAnimation.getKeyFrames()) {
 				
+				if(frame.isFlipY())
+					frame.flip(false, true);
+			}
+			
+			for(TextureRegion frame : hurtAnimation.getKeyFrames()) {
 				if(frame.isFlipY())
 					frame.flip(false, true);
 			}
@@ -151,8 +198,8 @@ public class Player {
 	}
 	
 	private void initCollisionSize() {
-		collisionSizeX = texture.getWidth()/TOTAL_FRAME_COLS;
-		collisionSizeY = texture.getHeight()/FRAME_ROWS;
+		collisionSizeX = texture.getWidth()/TOTAL_RUN_FRAMES;
+		collisionSizeY = texture.getHeight();
 
 	}
 	

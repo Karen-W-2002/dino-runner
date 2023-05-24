@@ -359,15 +359,18 @@ public class GameScreen implements Screen {
 	private void checkForCollisions() {
 		
 		for(Obstacle obstacle : obstacles) {
-			if (player.getRect().overlaps(obstacle.getRect())) {
-				if(!obstacle.getCollided() && health.getNumberOfLives() > 0) {
-					obstacle.turnOffCollision();
-					SoundsAndMusic.playCollisionSound();
-					health.removeHeart();
+			if(!player.isHurt()) {
+				if (player.getRect().overlaps(obstacle.getRect())) {
+					if(!obstacle.getCollided() && health.getNumberOfLives() > 0) {
+						obstacle.turnOffCollision();
+						player.setHurt();
+						SoundsAndMusic.playCollisionSound();
+						health.removeHeart();
+					}
+						
+					if(health.getNumberOfLives() == 0)
+						pause();
 				}
-					
-				if(health.getNumberOfLives() == 0)
-					pause();
 			}
 		}
 		

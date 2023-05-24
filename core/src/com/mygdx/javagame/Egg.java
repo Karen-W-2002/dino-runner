@@ -61,7 +61,7 @@ public class Egg {
 	}
 	
 	public void drawAnimation(float delta) {
-		TextureRegion region = getCurrentRunFrame(delta);
+		TextureRegion region = getCurrentEggFrame(delta);
 		game.batch.draw(region,  10, Constants.APP_HEIGHT - 100 - region.getRegionHeight()*scale, region.getRegionWidth()*scale, region.getRegionHeight()*scale);
 	}
 	
@@ -93,7 +93,7 @@ public class Egg {
 		return this.rect;
 	}
 	
-	TextureRegion getCurrentRunFrame(float time) {
+	TextureRegion getCurrentEggFrame(float time) {
 		return eggAnimation.getKeyFrame(time, true);
 	}
 	
