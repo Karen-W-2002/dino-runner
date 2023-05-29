@@ -61,7 +61,7 @@ public class MainMenuScreen implements Screen {
 	    text2x = Gdx.graphics.getWidth() / 2 - layout2.width/2;
 	    text2y = Gdx.graphics.getHeight() / 5 + layout2.height/2;
 	    
-	    logo = new Texture("LOGO.png");
+	    logo = new Texture("Menu/LOGO.png");
 	}
 	
 	@Override

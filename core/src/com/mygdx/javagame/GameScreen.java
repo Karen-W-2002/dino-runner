@@ -7,8 +7,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -52,10 +58,19 @@ public class GameScreen implements Screen {
 	Health health;
 	GameUI ui;
 	
+	// Shaperenderer
+	ShapeRenderer shape;
+	
+	// Other screens
+	PauseScreen pauseScreen;
+	GameoverScreen gameoverScreen;
+	
 	/*
 	 * GameScreen Constructor
 	 */
 	GameScreen(final Main game) {
+		shape = new ShapeRenderer();
+		
 		this.game = game;
 		GameScreen.player = new Player(game);
 		this.background = new Background(game);
@@ -89,6 +104,10 @@ public class GameScreen implements Screen {
 		
 		// Start the game
 		resume();
+	    
+	    // other screens
+	    gameoverScreen = new GameoverScreen(game);
+	    pauseScreen = new PauseScreen(game);
 	}
 	
 	@Override
@@ -96,7 +115,6 @@ public class GameScreen implements Screen {
 		// When the screen is shown
 		// Start the music
 		gameMusic.play();
-		
 	}
 
 	@Override
@@ -117,6 +135,7 @@ public class GameScreen implements Screen {
 		
 		Gdx.graphics.getGL20();
 		Gdx.gl.glDisable(GL20.GL_BLEND);
+		
 		
 		// BEGIN BATCH
 		game.batch.begin();
@@ -166,10 +185,13 @@ public class GameScreen implements Screen {
 		case PAUSE:
 			// Draw PAUSE screen
 			checkForResume();
+			blurBackground();
+			pauseScreen.draw();
 			break;
 			
 		case GAMEOVER:
-			System.out.println("DEATH");
+			blurBackground();
+			gameoverScreen.draw(); 
 			break;
 		default:
 			// Do nothing
@@ -210,6 +232,8 @@ public class GameScreen implements Screen {
 		player.dispose();
 		gameMusic.dispose();
 		ground.dispose();
+		pauseScreen.dispose();
+		gameoverScreen.dispose();
 	}
 	
 	/*
@@ -423,6 +447,16 @@ public class GameScreen implements Screen {
 		if(Gdx.input.isKeyJustPressed(Keys.ANY_KEY)) {
 			resume();
 		}
+	}
+	
+	private void blurBackground() {
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		shape.begin(ShapeRenderer.ShapeType.Filled);
+
+		shape.setColor(new Color(0, 0, 0, 0.6f));
+		shape.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+		shape.end();
 	}
 	
 }

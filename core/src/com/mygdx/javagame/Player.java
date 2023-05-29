@@ -70,7 +70,7 @@ public class Player {
 		
 		
 		// Initialize player rect
-		playerRect = new Rectangle(collisionPosX, COLLISION_Y_UPSIDE, collisionSizeX, collisionSizeY);
+		playerRect = new Rectangle(collisionPosX, COLLISION_Y_UPSIDE, collisionSizeX - 5, collisionSizeY);
 		
 		// FOR DEBUGGING
 		shape = new ShapeRenderer();
@@ -89,7 +89,6 @@ public class Player {
 			if(currentHurtFrame == TOTAL_HURT_FRAMES*10)  {
 				isHurt = false;
 				currentHurtFrame = 0;
-				// TODO: ADD INVINCIBILITY???
 			}
 		}
 		
