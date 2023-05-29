@@ -20,7 +20,6 @@ public class GameScreen implements Screen {
 	final Ground ground;
 	
 	// Obstacles
-//	public static List<Obstacle> obstacles = new ArrayList<Obstacle>();
 	List<Obstacle> obstacles = new ArrayList<Obstacle>();
 	List<ReverseFlip> reverseflips = new ArrayList<ReverseFlip>();
 	List<Egg> eggs = new ArrayList<Egg>();

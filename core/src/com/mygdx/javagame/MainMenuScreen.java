@@ -7,7 +7,9 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -20,13 +22,18 @@ public class MainMenuScreen implements Screen {
 	final Main game;
 	
 	OrthographicCamera camera;
-	Music menuMusic;
-	
-	// BUTTON
+
 	Stage stage;
 	
-	// BACKGROUND
 	private Background bg;
+	
+	BitmapFont font2;
+	GlyphLayout layout2;
+	float text2x;
+	float text2y;
+	String text2 = "CLICK ON ANY KEY TO START!";
+	
+	Texture logo;
 	
 	// INPUT PROCESSOR
 	MyInputProcessor inputProcessor = new MyInputProcessor();
@@ -39,32 +46,29 @@ public class MainMenuScreen implements Screen {
 		Gdx.input.setInputProcessor(stage);
 		
 		// Create the camera
-//		Common.initCamera(camera);
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, Constants.APP_WIDTH, Constants.APP_HEIGHT);
-		
-		// Create the music
-//		Common.initMusic(menuMusic, "Music Menu.mp3");
-		menuMusic = Gdx.audio.newMusic(Gdx.files.internal("Music Menu.mp3"));
-		menuMusic.setLooping(true);
 		
 		// BG
 		bg = new Background(game);
 		
-		
-		// BUTTONS
-		
-	    TextButtonStyle textButtonStyle = new TextButtonStyle();
-	    textButtonStyle.font = new BitmapFont();
-	    textButtonStyle.fontColor = Color.WHITE;
-	    stage.addActor(new TextButton("Custom Btn ", textButtonStyle));
+	    font2 = new BitmapFont();
+	    font2.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	    font2.getData().setScale(2);
+	    
+	    layout2 = new GlyphLayout(font2, text2);
+	    
+	    text2x = Gdx.graphics.getWidth() / 2 - layout2.width/2;
+	    text2y = Gdx.graphics.getHeight() / 5 + layout2.height/2;
+	    
+	    logo = new Texture("LOGO.png");
 	}
 	
 	@Override
 	public void show() {
 		// When the screen is shown
 		// Start the music
-		menuMusic.play();
+		SoundsAndMusic.toggleMainMusic();
 	}
 
 	@Override
@@ -78,20 +82,19 @@ public class MainMenuScreen implements Screen {
 		game.batch.setProjectionMatrix(camera.combined);
 		
 		game.batch.begin();
-//		bg.update();
+		bg.update();
 		
-//		game.font.draw(game.batch, "Welcome to Dino Thingy!", 100, 150);
-//		game.font.draw(game.batch, "Press any key to begin!", 100, 100);
-		
+		game.batch.draw(logo, Gdx.graphics.getWidth()/2 - logo.getWidth()/2, Gdx.graphics.getHeight()/2);
+		font2.draw(game.batch, text2, text2x, text2y);
 		
 		game.batch.end();
 		
 		if(Gdx.input.isKeyPressed(Keys.ANY_KEY)) {
+			SoundsAndMusic.toggleMainMusic();
 			game.setScreen(new GameScreen(game));
 			dispose();
 		}
 		
-//		stage.act();
 		stage.draw();
 		
 	}
@@ -122,7 +125,6 @@ public class MainMenuScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		menuMusic.dispose();
 
 	}
 

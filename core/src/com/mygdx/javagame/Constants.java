@@ -21,6 +21,6 @@ public class Constants {
 	 * CURRENT_SPEED: current speed
 	 */
 
-	public static final float MAX_SPEED = 1250.0f;
+	public static final float MAX_SPEED = 1100.0f;
 	public static float CURRENT_SPEED = 500.0f;
 }
