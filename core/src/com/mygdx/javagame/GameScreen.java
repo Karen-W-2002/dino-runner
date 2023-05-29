@@ -27,7 +27,7 @@ public class GameScreen implements Screen {
 	final Ground ground;
 	
 	// Obstacles
-	List<Obstacle> obstacles = new ArrayList<Obstacle>();
+	List<Wall> obstacles = new ArrayList<Wall>();
 	List<ReverseFlip> reverseflips = new ArrayList<ReverseFlip>();
 	List<Egg> eggs = new ArrayList<Egg>();
 	
@@ -176,6 +176,10 @@ public class GameScreen implements Screen {
 		case RUN:
 			stateTime += delta; // Accumulate elapsed animation time
 			
+			// Speeds up the game until MAX_SPEED is reached
+			if(Constants.CURRENT_SPEED < Constants.MAX_SPEED)
+				Constants.CURRENT_SPEED += delta * 3;
+			
 			updateItems(delta);
 			score.update(delta);
 			
@@ -206,7 +210,7 @@ public class GameScreen implements Screen {
 		// TODO Auto-generated method stub
 		viewport.update(width, height);
         camera.update();
-        for(Obstacle obstacle : obstacles) {
+        for(Wall obstacle : obstacles) {
         	obstacle.resize();
         }
 	}
@@ -252,7 +256,7 @@ public class GameScreen implements Screen {
 
 		else if(obstacles.size() != 0 && reverseflips.size() != 0){
 				
-			Obstacle lastObstacle = obstacles.get(obstacles.size() - 1);
+			Wall lastObstacle = obstacles.get(obstacles.size() - 1);
 			ReverseFlip lastRf = reverseflips.get(reverseflips.size() - 1);
 			
 			if(	lastObstacle.getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_OBSTACLES &&
@@ -285,7 +289,7 @@ public class GameScreen implements Screen {
 	 */
 	
 	private void createObstacles() {
-		Obstacle obstacle = new Obstacle();
+		Wall obstacle = new Wall();
 		obstacle.setX(Gdx.graphics.getWidth());
 		obstacles.add(obstacle);
 	}
@@ -316,7 +320,7 @@ public class GameScreen implements Screen {
 
 	private void removeOffscreenObstacles() {
 		if(obstacles.size() > 0) {
-			Obstacle firstObstacle = obstacles.get(0);
+			Wall firstObstacle = obstacles.get(0);
 			
 			if(firstObstacle.getX() < 0 - 10) {
 				obstacles.get(0).dispose();
@@ -347,7 +351,7 @@ public class GameScreen implements Screen {
 	}
 	
 	private void obstaclesUpdate(float delta) {
-		for(Obstacle obstacle : obstacles) {
+		for(Wall obstacle : obstacles) {
 			obstacle.update(delta);
 		}
 //		spawnObstacle();
@@ -371,7 +375,7 @@ public class GameScreen implements Screen {
 	}
 	
 	private void drawAllObstacles() {
-		for(Obstacle obstacle : obstacles) {
+		for(Wall obstacle : obstacles) {
 			obstacle.draw();
 		}
 		
@@ -399,7 +403,7 @@ public class GameScreen implements Screen {
 	 */
 	private void checkForCollisions() {
 		
-		for(Obstacle obstacle : obstacles) {
+		for(Wall obstacle : obstacles) {
 			if(!player.isHurt()) {
 				if (player.getRect().overlaps(obstacle.getRect())) {
 					if(!obstacle.getCollided() && health.getNumberOfLives() > 0) {

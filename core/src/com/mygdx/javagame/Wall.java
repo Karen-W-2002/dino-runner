@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
-public class Obstacle {
+public class Wall {
 	
 	private ShapeRenderer shape; 
 	
@@ -28,7 +28,7 @@ public class Obstacle {
 	// Rect for collisions
 	Rectangle obstacleRect;
 	
-	Obstacle() {
+	Wall() {
 		// Generating position Y direction
 		Random rand = new Random();
 		randPos = rand.nextInt(2);
@@ -44,8 +44,7 @@ public class Obstacle {
 	public void update(float delta) {
 		float xSpeed = Constants.CURRENT_SPEED * (delta);
 		
-		if(Constants.CURRENT_SPEED < Constants.MAX_SPEED)
-			Constants.CURRENT_SPEED += delta * 3; // TODO: move to gamescreen
+		
 		
 		
 		setX(posX -  xSpeed);
