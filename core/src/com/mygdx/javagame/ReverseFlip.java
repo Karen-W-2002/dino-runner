@@ -27,7 +27,7 @@ public class ReverseFlip {
 	private Sprite arrowBottomSprite;
 	
 	// FOR DEBUGGING: outlines collision box;
-	private ShapeRenderer shape;
+//	private ShapeRenderer shape;
 	
 	// Rect for collisions
 	private Rectangle rect;
@@ -37,7 +37,7 @@ public class ReverseFlip {
 	ReverseFlip(final Main game) {
 		this.game = game;
 		
-		shape = new ShapeRenderer();
+//		shape = new ShapeRenderer();
 		
 		texture = new Texture("arrow3.png");
 	
@@ -57,23 +57,18 @@ public class ReverseFlip {
 	public void update(float delta) {
 		float xSpeed = Constants.CURRENT_SPEED * delta;
 		
-		if(Constants.CURRENT_SPEED < Constants.MAX_SPEED)
-			Constants.CURRENT_SPEED += delta * 3; // TODO: move to gamescreen
+//		if(Constants.CURRENT_SPEED < Constants.MAX_SPEED)
+//			Constants.CURRENT_SPEED += delta * 3; // TODO: move to gamescreen
 		
 		setX(posX -  xSpeed);
 		updateRect(posX - xSpeed);
-
+	}
+	
+	public void draw() {
 		game.batch.begin();
 		game.batch.draw(arrowTopSprite, posX, posY, arrowTopSprite.getWidth(), arrowTopSprite.getHeight());
 		game.batch.draw(arrowBottomSprite, posX, posY - arrowBottomSprite.getHeight() - 10, arrowBottomSprite.getWidth(), arrowBottomSprite.getHeight());
 		game.batch.end();
-	
-	}
-	
-	public void draw() {
-		shape.begin(ShapeRenderer.ShapeType.Filled);
-		shape.rect(posX, posY - arrowTopSprite.getHeight() - 10, arrowTopSprite.getWidth(), arrowTopSprite.getHeight()*2 + 10);
-		shape.end();
 	}
 	
 	public void setX(float x) {
@@ -104,7 +99,7 @@ public class ReverseFlip {
 	 * Disposes of unwanted objects
 	 */
 	public void dispose() {
-		shape.dispose();
+//		shape.dispose();
 		texture.dispose();
 	
 	}

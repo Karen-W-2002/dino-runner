@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -30,13 +31,13 @@ public class GameScreen implements Screen {
 	
 	Viewport viewport;
 	
-	// A variable for tracking elapsed time for the animation
-	// TODO: maybe use delta time for the animation
+	// A variable for tracking elapsed time for the animations
 	float stateTime;
 	
 	public enum GameState {
 		RUN,
 		PAUSE,
+		GAMEOVER
 	}
 	
 	// INPUT PROCESSOR
@@ -108,13 +109,14 @@ public class GameScreen implements Screen {
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
 		
-		
+		// Check for any collisions
+		checkForCollisions();
 		
 		checkForPause();
 		
 		
-		// SHAPERENDERER ERROR
-		Gdx.gl.glDisable(Gdx.graphics.getGL20().GL_BLEND);
+		Gdx.graphics.getGL20();
+		Gdx.gl.glDisable(GL20.GL_BLEND);
 		
 		// BEGIN BATCH
 		game.batch.begin();
@@ -139,9 +141,8 @@ public class GameScreen implements Screen {
 		 * 2) Obstacles
 		 */
 		ground.draw();
-		for(Obstacle obstacle : obstacles) {
-			obstacle.draw();
-		}
+		
+		drawAllObstacles();
 		
 		/*
 		 * Switch Case GAMESTATE
@@ -156,11 +157,6 @@ public class GameScreen implements Screen {
 		case RUN:
 			stateTime += delta; // Accumulate elapsed animation time
 			
-			
-			
-			// Check for any collisions
-			checkForCollisions();
-			
 			updateItems(delta);
 			score.update(delta);
 			
@@ -168,6 +164,14 @@ public class GameScreen implements Screen {
 			break;
 			
 		case PAUSE:
+			// Draw PAUSE screen
+			checkForResume();
+			break;
+			
+		case GAMEOVER:
+			System.out.println("DEATH");
+			break;
+		default:
 			// Do nothing
 			break;
 		}
@@ -342,6 +346,20 @@ public class GameScreen implements Screen {
 		removeOffscreenEggs();
 	}
 	
+	private void drawAllObstacles() {
+		for(Obstacle obstacle : obstacles) {
+			obstacle.draw();
+		}
+		
+		for(ReverseFlip rf : reverseflips) {
+			rf.draw();
+		}
+		
+		for(Egg egg : eggs) {
+			egg.drawStatic();
+		}
+	}
+	
 	private void updateItems(float delta) {
 		obstaclesUpdate(delta);
 		reverseFlipsUpdate(delta);
@@ -368,7 +386,7 @@ public class GameScreen implements Screen {
 					}
 						
 					if(health.getNumberOfLives() == 0)
-						pause();
+						GameScreen.state = GameState.GAMEOVER;
 				}
 			}
 		}
@@ -398,6 +416,12 @@ public class GameScreen implements Screen {
 	private void checkForPause() {
 		if(Gdx.input.isKeyPressed(Keys.ESCAPE)) {
 			pause();
+		}
+	}
+	
+	private void checkForResume() {
+		if(Gdx.input.isKeyJustPressed(Keys.ANY_KEY)) {
+			resume();
 		}
 	}
 	

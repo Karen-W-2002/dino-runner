@@ -68,13 +68,12 @@ public class Egg {
 	public void update(float delta) {
 		float xSpeed = Constants.CURRENT_SPEED * (delta);
 		
-		if(Constants.CURRENT_SPEED < Constants.MAX_SPEED)
+//		if(Constants.CURRENT_SPEED < Constants.MAX_SPEED)
 //			Constants.CURRENT_SPEED += delta * 3; // TODO: move to gamescreen
 		
 		
 		setX(posX -  xSpeed);
 		updateRect(posX - xSpeed);
-		this.drawStatic();
 	}
 	
 	public void setX(float posX) {
