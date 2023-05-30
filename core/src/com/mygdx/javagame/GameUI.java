@@ -19,15 +19,25 @@ public class GameUI {
 		
 		score = new Score(game);
 		health = new Health(game);
-		
-		eggScore = 0;
-		eggScoreString = "x0";
 		egg = new Egg(game);
+		
+		reset();
 		
 		font = new BitmapFont();
 	    font.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	    font.getData().setScale(2);
 	    font.setColor(Color.WHITE);
+	}
+	
+	/*
+	 * Resets the UI, used for game start and restarts
+	 * @return void
+	 */
+	public void reset() {
+		eggScore = 0;
+		eggScoreString = "x0";
+		health.reset();
+		score.reset();
 	}
 	
 	/*

@@ -1,5 +1,6 @@
 package com.mygdx.javagame;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.mygdx.javagame.GameController.GameState;
 import com.badlogic.gdx.Input.Keys;
@@ -8,7 +9,13 @@ public class MyInputProcessor implements InputProcessor {
 	
 	public boolean keyDown (int keycode) {
 		
-		if(GameController.isRun()) {
+		
+		
+		if(GameController.isMainMenu()) {
+			GameController.setGameState(GameState.RUN);
+		}
+		
+		else if(GameController.isRun()) {
 			switch(keycode) {
 			
 				// Flip the player when space is pressed
@@ -39,10 +46,10 @@ public class MyInputProcessor implements InputProcessor {
 			switch(keycode) {
 			
 				case Keys.R:
-					System.out.println("RESTART");
+					GameController.setGameState(GameState.RESTART);
 					break;
 				case Keys.ESCAPE:
-					System.out.println("Game screen");
+					GameController.setGameState(GameState.MAINMENU);
 					break;
 				default:
 					break;

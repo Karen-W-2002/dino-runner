@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.javagame.GameController.GameState;
 
 public class GameScreen implements Screen {
 	final Main game;
@@ -37,7 +38,6 @@ public class GameScreen implements Screen {
 	MyInputProcessor inputProcessor = new MyInputProcessor();
 	
 	// UI
-//	Health health;
 	GameUI ui;
 	
 	// Shape renderer
@@ -51,6 +51,7 @@ public class GameScreen implements Screen {
 	 * GameScreen Constructor
 	 */
 	GameScreen(final Main game) {
+		
 		shape = new ShapeRenderer();
 		
 		this.game = game;
@@ -58,8 +59,7 @@ public class GameScreen implements Screen {
 		this.background = new Background(game);
 		this.ground = new Ground();
 		
-		// Create the obstacles
-		createObstacles();
+		
 		ui = new GameUI(game);
 		
 		// Create the camera
@@ -77,9 +77,6 @@ public class GameScreen implements Screen {
 		
 		viewport = new FitViewport(Constants.APP_WIDTH, Constants.APP_HEIGHT, camera);
  
-		
-		
-		
 		// Start the game
 		resume();
 	    
@@ -88,14 +85,37 @@ public class GameScreen implements Screen {
 	    pauseScreen = new PauseScreen(game);
 	}
 	
+	/*
+	 * Called when Game needs initializing
+	 * such as start or restart
+	 * @return void
+	 */
+	private void initGame() {
+		removeAllObstacles();
+		ui.reset();
+	}
+	
+	public void restartGame() {
+		initGame();
+	}
+	
 	@Override
 	public void show() {
 		// When the screen is shown
-//TODO: INIT GAME
+		initGame();
 	}
 
 	@Override
 	public void render(float delta) {
+		if(GameController.isRestart()) {
+			initGame();
+			GameController.setGameState(GameState.RUN);
+		}
+		
+		if(GameController.isMainMenu()) {
+			game.setScreen(new MainMenuScreen(game));
+		}
+		
 		// Clear screen - prevents screen flicker
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		ScreenUtils.clear(0, 0, 0, 1);
@@ -104,8 +124,7 @@ public class GameScreen implements Screen {
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
 		
-		// Check for any collisions
-		checkForCollisions();
+		
 		
 		Gdx.graphics.getGL20();
 		Gdx.gl.glDisable(GL20.GL_BLEND);
@@ -135,10 +154,9 @@ public class GameScreen implements Screen {
 		 * Switch Case GAMESTATE
 		 * If GameState is "RUN" then we update
 		 * 1. stateTime
-		 * 2. collisions
-		 * 3. obstacles
+		 *  TODO:
+		 * 2. obstacles
 		 * 
-		 * If GameState is "PAUSE" then do nothing...
 		 */
 		switch(GameController.state) {
 		case RUN:
@@ -148,6 +166,7 @@ public class GameScreen implements Screen {
 			if(Constants.CURRENT_SPEED < Constants.MAX_SPEED)
 				Constants.CURRENT_SPEED += delta * 3;
 			
+			checkForCollisions(); // Check for any collisions
 			updateItems(delta);
 			ui.updateScore(delta);
 			
@@ -155,7 +174,6 @@ public class GameScreen implements Screen {
 			break;
 			
 		case PAUSE:
-			// Draw PAUSE screen
 			blurBackground();
 			pauseScreen.draw();
 			break;
@@ -217,7 +235,7 @@ public class GameScreen implements Screen {
 	 * 3. TODO: Coins
 	 */
 	private void spawnItems() {
-		if(obstacles.size() == 0) createObstacles();
+		if(obstacles.size() == 0) createWalls();
 		else if(reverseflips.size() == 0 && obstacles.get(obstacles.size() - 1).getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_OBSTACLES) createReverseFlips();
 
 		else if(obstacles.size() != 0 && reverseflips.size() != 0){
@@ -228,7 +246,7 @@ public class GameScreen implements Screen {
 			if(	lastObstacle.getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_OBSTACLES &&
 				lastRf.getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_OBSTACLES
 			) {
-				createObstacles();
+				createWalls();
 			}
 			else if(lastObstacle.getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_OBSTACLES &&
 					lastRf.getX() < Constants.APP_WIDTH - Constants.GAP_BETWEEN_OBSTACLES) {
@@ -250,11 +268,8 @@ public class GameScreen implements Screen {
 	
 	}
 	
-	/*
-	 * Create individual items
-	 */
-	
-	private void createObstacles() {
+
+	private void createWalls() {
 		Wall obstacle = new Wall();
 		obstacle.setX(Gdx.graphics.getWidth());
 		obstacles.add(obstacle);
@@ -272,7 +287,31 @@ public class GameScreen implements Screen {
 		eggs.add(egg);
 	}
 	
-	private void removeOffscreenEggs() {
+	/*
+	 * Removes off screen objects
+	 * 1. Obstacle
+	 * 2. ReverseFlip
+	 * 3. Coins
+	 */
+	private void removeOffscreenItems() {
+		if(obstacles.size() > 0) {
+			Wall firstObstacle = obstacles.get(0);
+			
+			if(firstObstacle.getX() < 0 - 10) {
+				obstacles.get(0).dispose();
+				obstacles.remove(0);
+			}
+		}
+		
+		if(reverseflips.size() > 0) {
+			ReverseFlip rf = reverseflips.get(0);
+			
+			if(rf.getX() < 0 - 10) {
+				reverseflips.get(0).dispose();
+				reverseflips.remove(0);
+			}
+		}
+		
 		if(eggs.size() > 0) {
 			Egg firstEgg = eggs.get(0);
 			
@@ -283,59 +322,44 @@ public class GameScreen implements Screen {
 			
 		}
 	}
-
-	private void removeOffscreenObstacles() {
-		if(obstacles.size() > 0) {
-			Wall firstObstacle = obstacles.get(0);
-			
-			if(firstObstacle.getX() < 0 - 10) {
-				obstacles.get(0).dispose();
-				obstacles.remove(0);
-			}
-		}
-	}
-	
-	private void removeOffscreenReverseFlips() {
-		if(reverseflips.size() > 0) {
-			ReverseFlip rf = reverseflips.get(0);
-			
-			if(rf.getX() < 0 - 10) {
-				reverseflips.get(0).dispose();
-				reverseflips.remove(0);
-			}
-		}
-	}
 	
 	/*
-	 * Removes off screen objects
-	 * 1. TODO: Obstacle
-	 * 2. TODO: ReverseFlip
-	 * 3. TODO: Coins
+	 * Remove all screen objects to restart the game
+	 * @return void
 	 */
-	private void removeOffscreenItems() {
+	private void removeAllObstacles() {
+		for(int i=obstacles.size()-1; i>=0; i--) {	
+			obstacles.get(i).dispose();
+			obstacles.remove(obstacles.get(i));
+		}
 		
+		for(int i=reverseflips.size()-1; i>=0; i--) {
+			reverseflips.get(i).dispose();
+			reverseflips.remove(reverseflips.get(i));
+		}
+		
+		for(int i=eggs.size()-1; i>=0; i--) {
+			eggs.get(i).dispose();
+			eggs.remove(eggs.get(i));
+		}
 	}
 	
 	private void obstaclesUpdate(float delta) {
 		for(Wall obstacle : obstacles) {
 			obstacle.update(delta);
 		}
-		removeOffscreenObstacles();
 	}
 	
 	private void reverseFlipsUpdate(float delta) {
 		for(ReverseFlip rf : reverseflips) {
 			rf.update(delta);
 		}
-		removeOffscreenReverseFlips();
 	}
 	
 	private void eggsUpdate(float delta) {
 		for(Egg egg : eggs) {
 			egg.update(delta);
 		}
-		
-		removeOffscreenEggs();
 	}
 	
 	private void drawAllObstacles() {
@@ -356,6 +380,7 @@ public class GameScreen implements Screen {
 		obstaclesUpdate(delta);
 		reverseFlipsUpdate(delta);
 		eggsUpdate(delta);
+		removeOffscreenItems();
 		spawnItems();
 	}
 	
@@ -377,7 +402,7 @@ public class GameScreen implements Screen {
 						ui.updateHealth();
 					}
 						
-					if(!ui.isAlive())
+					if(!ui.isAlive() && !GameController.isGameover())
 						GameController.state = GameController.GameState.GAMEOVER;
 				}
 			}

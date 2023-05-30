@@ -13,13 +13,20 @@ public class Score {
 	
 	Score(Main game) {
 		this.game = game;
+		reset();
 		
-		score = 0f;
-		scoreString = "Score: 0";
 	    font = new BitmapFont();
 	    font.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	    font.getData().setScale(2);
-	    
+	}
+	
+	/*
+	 * Resets score for the UI, used for game start and restarts
+	 * @return void
+	 */
+	public void reset() {
+		score = 0f;
+		scoreString = "Score: 0";
 	}
 	
 	public void update(float delta) {

@@ -5,7 +5,6 @@ import java.util.Random;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Egg {
@@ -67,11 +66,7 @@ public class Egg {
 	
 	public void update(float delta) {
 		float xSpeed = Constants.CURRENT_SPEED * (delta);
-		
-//		if(Constants.CURRENT_SPEED < Constants.MAX_SPEED)
-//			Constants.CURRENT_SPEED += delta * 3; // TODO: move to gamescreen
-		
-		
+
 		setX(posX -  xSpeed);
 		updateRect(posX - xSpeed);
 	}

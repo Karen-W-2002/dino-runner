@@ -11,16 +11,21 @@ public class Health {
 	private int numberOfLives;
 	
 	Health(Main game) {
-		
 		this.game = game;
-		
-		// Initialize the number of lives to 3
-		numberOfLives = 3;
-		
+		reset();
+
 		heart = new Texture("Health/heart.png");
 		heartEmpty = new Texture("Health/heart_empty.png");
 	}
 	
+	/*
+	 * Resets health for the UI, used for game start and restarts
+	 * @return void
+	 */
+	public void reset() {
+		// Initialize the number of lives to 3
+		numberOfLives = 3;
+	}
 
 	public void draw() {
 		switch(this.getNumberOfLives()) {

@@ -15,7 +15,7 @@ public class Main extends Game {
 		font = new BitmapFont();
 		this.setScreen(new MainMenuScreen(this));
 	}
-	
+
 	public void render() {
 		super.render();
 	}

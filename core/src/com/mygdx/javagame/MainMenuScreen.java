@@ -3,17 +3,12 @@ package com.mygdx.javagame;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -62,6 +57,7 @@ public class MainMenuScreen implements Screen {
 	    text2y = Gdx.graphics.getHeight() / 5 + layout2.height/2;
 	    
 	    logo = new Texture("Menu/LOGO.png");
+	    Gdx.input.setInputProcessor(inputProcessor);
 	}
 	
 	@Override
@@ -89,7 +85,8 @@ public class MainMenuScreen implements Screen {
 		
 		game.batch.end();
 		
-		if(Gdx.input.isKeyPressed(Keys.ANY_KEY)) {
+		
+		if(GameController.isRun()) {
 			SoundsAndMusic.toggleMainMusic(); // Turn off Main menu music
 			SoundsAndMusic.toggleGameMusic(); // Turn on Game music
 			game.setScreen(new GameScreen(game));
