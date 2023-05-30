@@ -93,6 +93,7 @@ public class GameScreen implements Screen {
 	private void initGame() {
 		removeAllObstacles();
 		ui.reset();
+		if(player!=null && player.isFlip()) player.flip(); // Flips the player upside before starting
 	}
 	
 	public void restartGame() {

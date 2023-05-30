@@ -189,6 +189,15 @@ public class Player {
 		}
 	}
 	
+	/*
+	 * Returns true if player is flipped
+	 * else false
+	 * @return boolean
+	 */
+	public boolean isFlip() {
+		return this.getY() != POSITION_Y_UPSIDE;
+	}
+	
 	private void initCollisionPos() {
 		collisionPosX = posX + collisionSizeX;
 		COLLISION_Y_UPSIDE = posY + collisionSizeY;
