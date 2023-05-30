@@ -5,15 +5,9 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -33,32 +27,20 @@ public class GameScreen implements Screen {
 	
 	Stage stage;
 	OrthographicCamera camera;
-	Music gameMusic;
 	
 	Viewport viewport;
 	
 	// A variable for tracking elapsed time for the animations
 	float stateTime;
 	
-	public enum GameState {
-		RUN,
-		PAUSE,
-		GAMEOVER
-	}
-	
 	// INPUT PROCESSOR
 	MyInputProcessor inputProcessor = new MyInputProcessor();
 	
-	// GAME STATE
-	public static GameState state = null;
-	
-	
-	// score
-	Score score;
-	Health health;
+	// UI
+//	Health health;
 	GameUI ui;
 	
-	// Shaperenderer
+	// Shape renderer
 	ShapeRenderer shape;
 	
 	// Other screens
@@ -84,10 +66,6 @@ public class GameScreen implements Screen {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, Constants.APP_WIDTH, Constants.APP_HEIGHT);
 		
-		// Create the music
-		gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Music Game.mp3"));
-		gameMusic.setLooping(true);
-		
 		// Create the stage
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
@@ -99,8 +77,8 @@ public class GameScreen implements Screen {
 		
 		viewport = new FitViewport(Constants.APP_WIDTH, Constants.APP_HEIGHT, camera);
  
-		score = new Score(game);
-		health = new Health(game);
+		
+		
 		
 		// Start the game
 		resume();
@@ -113,8 +91,7 @@ public class GameScreen implements Screen {
 	@Override
 	public void show() {
 		// When the screen is shown
-		// Start the music
-		gameMusic.play();
+//TODO: INIT GAME
 	}
 
 	@Override
@@ -130,29 +107,20 @@ public class GameScreen implements Screen {
 		// Check for any collisions
 		checkForCollisions();
 		
-		checkForPause();
-		
-		
 		Gdx.graphics.getGL20();
 		Gdx.gl.glDisable(GL20.GL_BLEND);
-		
 		
 		// BEGIN BATCH
 		game.batch.begin();
 		
-		
-		
 		background.update();
 		player.update(stateTime);
-		health.draw();
+		
 		
 		// END BATCH
 		game.batch.end();
 		
-		
-		score.draw();
 		ui.drawUI(stateTime);
-		
 		
 		/*
 		 * Draw shape renderer:
@@ -172,7 +140,7 @@ public class GameScreen implements Screen {
 		 * 
 		 * If GameState is "PAUSE" then do nothing...
 		 */
-		switch(state) {
+		switch(GameController.state) {
 		case RUN:
 			stateTime += delta; // Accumulate elapsed animation time
 			
@@ -181,14 +149,13 @@ public class GameScreen implements Screen {
 				Constants.CURRENT_SPEED += delta * 3;
 			
 			updateItems(delta);
-			score.update(delta);
+			ui.updateScore(delta);
 			
 			
 			break;
 			
 		case PAUSE:
 			// Draw PAUSE screen
-			checkForResume();
 			blurBackground();
 			pauseScreen.draw();
 			break;
@@ -217,12 +184,12 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void pause() {
-		GameScreen.state = GameState.PAUSE;
+		GameController.state = GameController.GameState.PAUSE;
 	}
 
 	@Override
 	public void resume() {
-		GameScreen.state = GameState.RUN;
+		GameController.state = GameController.GameState.RUN;
 	}
 
 	@Override
@@ -234,7 +201,6 @@ public class GameScreen implements Screen {
 	@Override
 	public void dispose() {
 		player.dispose();
-		gameMusic.dispose();
 		ground.dispose();
 		pauseScreen.dispose();
 		gameoverScreen.dispose();
@@ -354,7 +320,6 @@ public class GameScreen implements Screen {
 		for(Wall obstacle : obstacles) {
 			obstacle.update(delta);
 		}
-//		spawnObstacle();
 		removeOffscreenObstacles();
 	}
 	
@@ -362,7 +327,6 @@ public class GameScreen implements Screen {
 		for(ReverseFlip rf : reverseflips) {
 			rf.update(delta);
 		}
-//		spawnReverseFlip();
 		removeOffscreenReverseFlips();
 	}
 	
@@ -406,15 +370,15 @@ public class GameScreen implements Screen {
 		for(Wall obstacle : obstacles) {
 			if(!player.isHurt()) {
 				if (player.getRect().overlaps(obstacle.getRect())) {
-					if(!obstacle.getCollided() && health.getNumberOfLives() > 0) {
+					if(!obstacle.getCollided() && ui.isAlive()) {
 						obstacle.turnOffCollision();
 						player.setHurt();
 						SoundsAndMusic.playCollisionSound();
-						health.removeHeart();
+						ui.updateHealth();
 					}
 						
-					if(health.getNumberOfLives() == 0)
-						GameScreen.state = GameState.GAMEOVER;
+					if(!ui.isAlive())
+						GameController.state = GameController.GameState.GAMEOVER;
 				}
 			}
 		}
@@ -439,18 +403,6 @@ public class GameScreen implements Screen {
 		}
 		
 		
-	}
-	
-	private void checkForPause() {
-		if(Gdx.input.isKeyPressed(Keys.ESCAPE)) {
-			pause();
-		}
-	}
-	
-	private void checkForResume() {
-		if(Gdx.input.isKeyJustPressed(Keys.ANY_KEY)) {
-			resume();
-		}
 	}
 	
 	private void blurBackground() {

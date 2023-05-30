@@ -28,10 +28,8 @@ public class Score {
 	}
 	
 	public void draw() {
-		game.batch.begin();
 		font.setColor(Color.WHITE);
 		font.draw(game.batch, scoreString, 10, Constants.APP_HEIGHT - 20);
-		game.batch.end();
 	}
 	
 	public void resize() {

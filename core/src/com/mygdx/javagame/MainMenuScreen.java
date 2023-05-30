@@ -90,7 +90,8 @@ public class MainMenuScreen implements Screen {
 		game.batch.end();
 		
 		if(Gdx.input.isKeyPressed(Keys.ANY_KEY)) {
-			SoundsAndMusic.toggleMainMusic();
+			SoundsAndMusic.toggleMainMusic(); // Turn off Main menu music
+			SoundsAndMusic.toggleGameMusic(); // Turn on Game music
 			game.setScreen(new GameScreen(game));
 			dispose();
 		}
@@ -125,7 +126,7 @@ public class MainMenuScreen implements Screen {
 
 	@Override
 	public void dispose() {
-
+		font2.dispose();
 	}
 
 	

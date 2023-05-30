@@ -10,6 +10,7 @@ public class SoundsAndMusic {
 	
 	// Music
 	private static Music menuMusic = Gdx.audio.newMusic(Gdx.files.internal("Music Menu.mp3"));
+	private static Music gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Music Game.mp3"));
 	
 	// Sound methods
 	public static void playCollisionSound() {
@@ -27,8 +28,19 @@ public class SoundsAndMusic {
 		}
 	}
 	
+	public static void toggleGameMusic() {
+		if(gameMusic.isPlaying()) {
+			gameMusic.stop();
+		}
+		else {
+			gameMusic.play();
+			gameMusic.setLooping(true);
+		}
+	}
+	
 	public void dispose() {
 		collisionSound.dispose();
 		menuMusic.dispose();
+		gameMusic.dispose();
 	}
 }
