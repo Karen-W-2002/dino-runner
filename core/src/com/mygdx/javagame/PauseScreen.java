@@ -23,7 +23,7 @@ public class PauseScreen {
 	    font.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	    font.getData().setScale(2);
 		
-		layout1 = new GlyphLayout(font, "PRESS ESC TO CONTINUE...");
+		layout1 = new GlyphLayout(font, "PRESS ANY KEY TO CONTINUE...");
 		
 		pause = new Texture("Menu/PAUSE.png");
 	}

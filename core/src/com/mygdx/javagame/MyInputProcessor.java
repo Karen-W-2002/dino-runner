@@ -1,6 +1,5 @@
 package com.mygdx.javagame;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.mygdx.javagame.GameController.GameState;
 import com.badlogic.gdx.Input.Keys;
@@ -12,7 +11,10 @@ public class MyInputProcessor implements InputProcessor {
 		
 		
 		if(GameController.isMainMenu()) {
+			
+			// ANY KEY WORKS
 			GameController.setGameState(GameState.RUN);
+			
 		}
 		
 		else if(GameController.isRun()) {
@@ -32,14 +34,10 @@ public class MyInputProcessor implements InputProcessor {
 		}
 		
 		else if(GameController.isPause()) {
-			switch(keycode) {
-			
-				// Set game state to RUN when escape is pressed
-				case Keys.ESCAPE:
-					GameController.setGameState(GameState.RUN);
-					break;
-			
-			}
+	
+			// ANY KEY WORKS
+			GameController.setGameState(GameState.RUN);
+
 		}
 		
 		else if(GameController.isGameover()) {
