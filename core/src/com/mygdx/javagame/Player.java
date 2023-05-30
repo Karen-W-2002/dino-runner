@@ -8,13 +8,14 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Player {
 	
-	final Main game;
+	final MyGame game;
 	
 	/*
-	 * Running Frame Animations
+	 * Number of Frames in Sprite
 	 */
 	private static final int TOTAL_RUN_FRAMES = 6;
 	private static final int TOTAL_HURT_FRAMES = 4;
+	private static final int TOTAL_DEAD_FRAMES = 5;
 
 	// Constant Position Y of Dino
 	private static final float POSITION_Y_UPSIDE = Constants.APP_HEIGHT/2 + 10;
@@ -33,6 +34,7 @@ public class Player {
 	// Texture for player sprite
 	private Texture texture;
 	private Texture hurtTexture;
+	private Texture deadTexture;
 	
 	// Texture animations
 	Animation<TextureRegion> runAnimation;
@@ -41,6 +43,8 @@ public class Player {
 	Animation<TextureRegion> hurtAnimation;
 	TextureRegion[] hurtFrames = new TextureRegion[TOTAL_HURT_FRAMES];
 	
+	Animation<TextureRegion> deadAnimation;
+	TextureRegion[] deadFrames = new TextureRegion[TOTAL_DEAD_FRAMES];
 	
 	// Player position
 	private float posX = 0;
@@ -56,12 +60,13 @@ public class Player {
 	private boolean isHurt = false;
 	private int currentHurtFrame = 0;
 
-	Player(final Main game) {
+	Player(final MyGame game) {
 		this.game = game;
 		
 		// Load in the new texture
-		texture = new Texture("DinoMove/doux_move.png");
-		hurtTexture = new Texture("DinoHurt/doux_hurt.png");
+		texture = new Texture("Dino/doux_move.png");
+		hurtTexture = new Texture("Dino/doux_hurt.png");
+		deadTexture = new Texture("Dino/doux_dead.png");
 		initSpriteAnimation();
 		
 		// Initialize player collision box position and size
@@ -94,6 +99,11 @@ public class Player {
 		
 	}
 	
+	public void drawAnimation(float delta) {
+		TextureRegion region = getCurrentDeadFrame(delta);
+		game.batch.draw(region, Constants.APP_WIDTH/2 - region.getRegionWidth()*5, Constants.APP_HEIGHT/2 - region.getRegionHeight()*5, region.getRegionWidth()*10, region.getRegionHeight()*10);
+	}
+	
 	public void setHurt() {
 		this.isHurt = true;
 	}
@@ -112,7 +122,11 @@ public class Player {
 	}
 	
 	TextureRegion getCurrentHurtFrame(float time) {
-		return hurtAnimation.getKeyFrame(time,true);
+		return hurtAnimation.getKeyFrame(time, true);
+	}
+	
+	TextureRegion getCurrentDeadFrame(float time) {
+		return deadAnimation.getKeyFrame(time, true);
 	}
 	
 	Rectangle getRect() {
@@ -146,11 +160,21 @@ public class Player {
 				hurtTexture.getHeight());
 		
 		for(int i=0; i<TOTAL_HURT_FRAMES; i++) {
-			System.out.println(i);
 			hurtFrames[i] = tempRegion[0][i];
 		}
 		
 		hurtAnimation = new Animation<TextureRegion>(0.1f, hurtFrames);
+		
+		// DEAD FRAMES
+		tempRegion = TextureRegion.split(deadTexture,
+				deadTexture.getWidth()/TOTAL_DEAD_FRAMES,
+				deadTexture.getHeight());
+		
+		for(int i=0; i<TOTAL_DEAD_FRAMES; i++) {
+			deadFrames[i] = tempRegion[0][i];
+		}
+		
+		deadAnimation = new Animation<TextureRegion>(0.4f, deadFrames);
 	}
 	
 	// Flips the player's animation and its position

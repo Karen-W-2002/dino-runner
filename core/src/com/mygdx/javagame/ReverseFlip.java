@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class ReverseFlip {
 	
-	final Main game;
+	final MyGame game;
 	
 	/*
 	 * Position of this object
@@ -34,7 +34,7 @@ public class ReverseFlip {
 	
 	private boolean isCollided = false;
 	
-	ReverseFlip(final Main game) {
+	ReverseFlip(final MyGame game) {
 		this.game = game;
 		
 //		shape = new ShapeRenderer();

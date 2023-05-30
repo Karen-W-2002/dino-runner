@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 public class GameoverScreen {
 	
-	Main game;
+	MyGame game;
 	
 	GlyphLayout layout1;
 	GlyphLayout layout2;
@@ -17,7 +17,10 @@ public class GameoverScreen {
 	
 	Texture gameover;
 	
-	GameoverScreen(Main game) {
+	Player player;
+	float deathTime = 0;
+	
+	GameoverScreen(MyGame game) {
 		this.game = game;
 		
 		font = new BitmapFont();
@@ -28,10 +31,14 @@ public class GameoverScreen {
 		layout2 = new GlyphLayout(font, "PRESS ESC TO GO TO MAIN MENU.");
 		
 		gameover = new Texture("Menu/GAMEOVER.png");
+		
+		player = new Player(game);
 	}
 	
-	public void draw() {
+	public void draw(float delta) {
+		deathTime += delta;
 		game.batch.begin();
+		player.drawAnimation(deathTime);
 		game.batch.draw(gameover, Gdx.graphics.getWidth()/2 - gameover.getWidth()/2, Gdx.graphics.getHeight()/2 + Gdx.graphics.getHeight()/5);
 		font.draw(game.batch, layout1, Gdx.graphics.getWidth() / 2 - layout1.width/2, Gdx.graphics.getHeight() / 4 + layout1.height/2);
 		font.draw(game.batch, layout2, Gdx.graphics.getWidth() / 2 - layout2.width/2, Gdx.graphics.getHeight() / 6 + layout2.height/2);

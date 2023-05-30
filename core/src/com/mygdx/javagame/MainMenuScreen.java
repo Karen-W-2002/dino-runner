@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class MainMenuScreen implements Screen {
 
-	final Main game;
+	final MyGame game;
 	
 	OrthographicCamera camera;
 
@@ -33,7 +33,7 @@ public class MainMenuScreen implements Screen {
 	// INPUT PROCESSOR
 	MyInputProcessor inputProcessor = new MyInputProcessor();
 	
-	public MainMenuScreen(final Main game) {
+	public MainMenuScreen(final MyGame game) {
 		this.game = game;
 		
 		// Staged

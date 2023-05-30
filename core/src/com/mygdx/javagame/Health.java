@@ -4,13 +4,13 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class Health {
 
-	final Main game;
+	final MyGame game;
 	private Texture heart;
 	private Texture heartEmpty;
 	
 	private int numberOfLives;
 	
-	Health(Main game) {
+	Health(MyGame game) {
 		this.game = game;
 		reset();
 

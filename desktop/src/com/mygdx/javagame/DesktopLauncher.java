@@ -1,6 +1,5 @@
 package com.mygdx.javagame;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
@@ -14,6 +13,6 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setTitle("Dino Runner");
 		
-		new Lwjgl3Application(new Main(), config);
+		new Lwjgl3Application(new MyGame(), config);
 	}
 }

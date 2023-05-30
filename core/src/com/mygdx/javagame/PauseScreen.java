@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 public class PauseScreen {
 
-	Main game;
+	MyGame game;
 	
 	GlyphLayout layout1;
 	
@@ -16,7 +16,7 @@ public class PauseScreen {
 	
 	Texture pause;
 	
-	PauseScreen(Main game) {
+	PauseScreen(MyGame game) {
 		this.game = game;
 		
 		font = new BitmapFont();

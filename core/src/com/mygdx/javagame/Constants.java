@@ -12,6 +12,11 @@ public class Constants {
 	public static final int APP_WIDTH_RESOLUTION = 1920;
 	public static final int APP_HEIGHT_RESOLUTION = 1080;
 	
+	/*
+	 * Gap distance before the next obstacle configurations
+	 * GAP_BETWEEN_OBSTACLES: Reverseflips and wall gaps
+	 * GAP_BETWEEN_EGGS: Egg gaps
+	 */
 	public static final float GAP_BETWEEN_OBSTACLES = 300.0f;
 	public static final float GAP_BETWEEN_EGGS = 150.0f;
 	

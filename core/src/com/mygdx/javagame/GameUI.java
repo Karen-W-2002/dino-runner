@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 public class GameUI {
 
-	final Main game;
+	final MyGame game;
 	private Score score; // Game score
 	private Health health; // Health (3 hearts)
 	private Egg egg; // Egg texture (animated)
@@ -14,7 +14,7 @@ public class GameUI {
 	private String eggScoreString;
 	private BitmapFont font;
 	
-	GameUI(final Main game) {
+	GameUI(final MyGame game) {
 		this.game = game;
 		
 		score = new Score(game);

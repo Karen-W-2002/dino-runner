@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.javagame.GameController.GameState;
 
 public class GameScreen implements Screen {
-	final Main game;
+	final MyGame game;
 	static Player player = null;
 	final Background background;
 	final Ground ground;
@@ -50,7 +50,7 @@ public class GameScreen implements Screen {
 	/*
 	 * GameScreen Constructor
 	 */
-	GameScreen(final Main game) {
+	GameScreen(final MyGame game) {
 		
 		shape = new ShapeRenderer();
 		
@@ -181,7 +181,7 @@ public class GameScreen implements Screen {
 			
 		case GAMEOVER:
 			blurBackground();
-			gameoverScreen.draw(); 
+			gameoverScreen.draw(delta); 
 			break;
 		default:
 			// Do nothing

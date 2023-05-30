@@ -6,12 +6,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 public class Score {
 	
-	final Main game;
+	final MyGame game;
 	private float score;
 	private String scoreString;
 	BitmapFont font;
 	
-	Score(Main game) {
+	Score(MyGame game) {
 		this.game = game;
 		reset();
 		

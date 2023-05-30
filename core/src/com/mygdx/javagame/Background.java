@@ -8,11 +8,11 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class Background {
 
-	final Main game;
+	final MyGame game;
 	private List<Texture> texture;
 //	private Sprite sprite;
 	
-	Background(Main game) {
+	Background(MyGame game) {
 		this.game = game;
 		texture = new ArrayList<Texture>();
 		

@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Egg {
 	
-	final Main game;
+	final MyGame game;
 
 	Texture eggTexture;
 	Animation<TextureRegion> eggAnimation;
@@ -31,10 +31,10 @@ public class Egg {
 	private float sizeX;
 	private float sizeY;
 	
-	Egg(final Main game) {
+	Egg(final MyGame game) {
 		this.game = game;
 		
-		eggTexture = new Texture("DinoEgg/egg_blue.png");
+		eggTexture = new Texture("Dino/doux_egg.png");
 
 				
 		initEggAnimation();
