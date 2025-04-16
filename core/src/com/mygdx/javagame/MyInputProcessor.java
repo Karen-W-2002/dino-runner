@@ -87,6 +87,12 @@ public class MyInputProcessor implements InputProcessor {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	@Override
+	public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+	    // TODO
+	    return false; // Returning false means you don't want to cancel the event
+	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
